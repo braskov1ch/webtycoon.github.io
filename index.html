@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>program.in v1.1 — IT Career & Startup Simulator</title>
+<style>
+:root {
+  --bg: #090d16;
+  --panel: #111827;
+  --panel-alt: #162035;
+  --border: #1f2d45;
+  --border-focus: #38bdf8;
+  --text: #e2e8f0;
+  --text-muted: #8494ab;
+  --cyan: #38bdf8;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --purple: #a855f7;
+  --radius: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  user-select: none;
+  min-height: 100vh;
+}
+button, input, select {
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+}
+button {
+  cursor: pointer;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  padding: 8px 14px;
+  font-weight: 600;
+  transition: all .15s ease;
+}
+button:hover:not(:disabled) {
+  border-color: var(--cyan);
+  background: #1c2a47;
+  color: #fff;
+}
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: #0284c7; border-color: var(--cyan); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #0369a1; }
+.btn-success { background: #059669; border-color: var(--green); color: #fff; }
+.btn-danger { background: #dc2626; border-color: var(--red); color: #fff; }
+.btn-sm { padding: 4px 9px; font-size: 12px; }
+
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* Стартовый экран */
+#screen-menu {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 20%, #152238, #090d16 75%);
+}
+.brand-title {
+  font: 900 clamp(2.8rem, 8vw, 4.5rem)/1.1 Consolas, monospace;
+  color: var(--cyan);
+  letter-spacing: -2px;
+  text-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+}
+.brand-sub { color: var(--text-muted); max-width: 540px; margin: 14px 0 28px; }
+.menu-stack { display: grid; gap: 10px; width: min(320px, 100%); }
+
+/* Создание персонажа */
+#screen-creation { justify-content: center; align-items: center; padding: 20px; }
+.creator-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: min(880px, 100%);
+  padding: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 18px 0;
+}
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); }
+.field select, .field input {
+  background: #0a0e17;
+  border: 1px solid var(--border);
+  padding: 9px 11px;
+  border-radius: var(--radius);
+}
+.field select:focus, .field input:focus { border-color: var(--cyan); outline: none; }
+
+/* Игровой интерфейс */
+#screen-game { flex-direction: column; height: 100vh; overflow: hidden; }
+header.hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #0d1320;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hud-section { display: flex; align-items: center; gap: 10px; }
+.hud-stat {
+  background: #090e18;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+}
+.hud-stat b { font-weight: 700; }
+.text-green { color: var(--green); }
+.text-cyan { color: var(--cyan); }
+.text-yellow { color: var(--yellow); }
+.text-red { color: var(--red); }
+.text-purple { color: var(--purple); }
+
+.layout { display: flex; flex: 1; overflow: hidden; }
+nav.sidebar {
+  width: 220px;
+  background: #0b101c;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 8px;
+  overflow-y: auto;
+}
+.nav-btn {
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  padding: 9px 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-btn:hover { background: #131c31; color: var(--text); }
+.nav-btn.active {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: var(--cyan);
+}
+.badge {
+  background: #1e293b;
+  color: var(--text);
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+main.content-area {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: var(--bg);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn .15s ease; }
+@keyframes fadeIn { from { opacity: 0.6; } to { opacity: 1; } }
+
+/* Компоненты UI */
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.view-title { font-size: 1.3rem; font-weight: 700; color: #fff; }
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+.panel-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.panel-card h3 { font-size: 1rem; color: #fff; }
+.meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+.progress-bar {
+  height: 8px;
+  background: #090e18;
+  border: 1px solid #1c273c;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--cyan);
+  width: 0%;
+  transition: width .2s;
+}
+.progress-fill.green { background: var(--green); }
+.progress-fill.purple { background: var(--purple); }
+
+/* Модальные окна */
+.modal-layer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+.modal-layer.active { display: flex; }
+.modal-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: min(620px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.wizard-step { display: none; flex-direction: column; gap: 12px; }
+.wizard-step.active { display: flex; }
+
+/* Лог и тосты */
+.toast-shelf {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast-item {
+  background: #1e293b;
+  border-left: 4px solid var(--cyan);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  pointer-events: all;
+  animation: slideIn .2s ease;
+}
+.toast-item.red { border-color: var(--red); }
+.toast-item.green { border-color: var(--green); }
+@keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Мобильная адаптивность */
+@media (max-width: 768px) {
+  nav.sidebar {
+    position: fixed;
+    top: 52px;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform .2s;
+    width: 240px;
+  }
+  nav.sidebar.open { transform: none; }
+  .mobile-nav-toggle { display: inline-block !important; }
+}
+.mobile-nav-toggle { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Главное меню -->
+<div id="screen-menu" class="screen active">
+  <div class="brand-title">program.in</div>
+  <p class="brand-sub">Экономический симулятор IT-индустрии: пройдите путь от диалап-модема 2000 года до глобальной корпорации.</p>
+  <div class="menu-stack">
+    <button class="btn-primary" onclick="GameApp.openCharacterCreator()">✨ Новая карьера</button>
+    <button id="btn-quick-load" onclick="GameApp.loadGame('auto')">▶ Продолжить</button>
+    <button onclick="GameApp.exportSave()">📥 Экспорт файла сохранения</button>
+    <button onclick="document.getElementById('import-input').click()">📤 Импорт сохранения</button>
+    <input type="file" id="import-input" style="display:none" onchange="GameApp.importSave(event)">
+  </div>
+</div>
+
+<!-- Создание персонажа -->
+<div id="screen-creation" class="screen">
+  <div class="creator-card">
+    <h2 style="color:var(--cyan); margin-bottom:4px;">Параметры нового специалиста</h2>
+    <p style="color:var(--text-muted); font-size:12px;">Вы определяете стартовый фундамент, географию расходов и личные склонности.</p>
+    
+    <div class="form-grid">
+      <div class="field">
+        <label>Имя разработчика</label>
+        <input type="text" id="cr-name" value="Алекс Брин" maxlength="32">
+      </div>
+      <div class="field">
+        <label>Возраст (18–50 лет)</label>
+        <input type="number" id="cr-age" value="22" min="18" max="50">
+      </div>
+      <div class="field">
+        <label>Локация (аренда / рынок)</label>
+        <select id="cr-location">
+          <option value="sf">США, Сан-Франциско (Аренда: $1800/мес, Клиенты: +40%)</option>
+          <option value="msk" selected>Россия, Москва (Аренда: $550/мес, Базовый рынок)</option>
+          <option value="ber">Германия, Берлин (Аренда: $1100/мес, Стабильный рынок)</option>
+          <option value="blr">Индия, Бангалор (Аренда: $280/мес, Высокая конкуренция)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Первоначальная специализация</label>
+        <select id="cr-spec">
+          <option value="web">Веб-разработка (HTML, JS, PHP)</option>
+          <option value="sys">Системное ПО и утилиты (C/C++, Архитектура)</option>
+          <option value="game">Разработка игр (C++, 2D/3D Графика)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Предыстория и сценарий</label>
+        <select id="cr-scenario">
+          <option value="self">Самоучка (Капитал $600, ПК 486 DX, упор на практику)</option>
+          <option value="grad">Выпускник вуза (Капитал $1200, база теории +10)</option>
+          <option value="freelance">Опытный подмастерье (Капитал $900, начальная репутация 20)</option>
+          <option value="debt">Стартапер в долгах (Капитал $3500, долг банку $3000)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Ключевая черта (Перк)</label>
+        <select id="cr-trait">
+          <option value="workaholic">Трудоголик (Энергия расходуется на 20% медленнее)</option>
+          <option value="clean_code">Чистый код (На 35% меньше багов в продуктах)</option>
+          <option value="merchant">Коммерсант (Оплата по заказам и продуктам +15%)</option>
+          <option value="fast_learner">Эрудит (Обучение технологиям на 25% быстрее)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; margin-top:16px;">
+      <button onclick="GameApp.showScreen('screen-menu')">Отмена</button>
+      <button class="btn-primary" onclick="GameApp.confirmCharacter()">Запустить карьеру (1 Января 2000)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Игровое пространство -->
+<div id="screen-game" class="screen">
+  <header class="hud">
+    <div class="hud-section">
+      <button class="mobile-nav-toggle btn-sm" onclick="GameApp.toggleSidebar()">☰ Меню</button>
+      <span style="font-family:Consolas, monospace; font-weight:700; color:var(--cyan);">program.in</span>
+      <span class="hud-stat" id="hud-era">2000 · Dial-up Era</span>
+    </div>
+
+    <div class="hud-section">
+      <div class="hud-stat">📅 <b id="hud-date">01.01.2000</b></div>
+      <div class="hud-stat">💵 <b class="text-green" id="hud-cash">$0</b></div>
+      <div class="hud-stat">⚡ <b class="text-cyan" id="hud-energy">100%</b></div>
+      <div class="hud-stat">⭐ Репутация: <b id="hud-rep">10</b></div>
+    </div>
+
+    <div class="hud-section">
+      <button class="btn-sm" id="btn-sp-0" onclick="GameApp.setSpeed(0)">⏸</button>
+      <button class="btn-sm btn-primary" id="btn-sp-1" onclick="GameApp.setSpeed(1)">1x</button>
+      <button class="btn-sm" id="btn-sp-2" onclick="GameApp.setSpeed(2)">2x</button>
+      <button class="btn-sm" id="btn-sp-5" onclick="GameApp.setSpeed(5)">5x</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="app-sidebar">
+      <button class="nav-btn active" data-tab="tab-dash" onclick="GameApp.openTab('tab-dash')">💻 Рабочий стол</button>
+      <button class="nav-btn" data-tab="tab-char" onclick="GameApp.openTab('tab-char')">👤 Специалист</button>
+      <button class="nav-btn" data-tab="tab-orders" onclick="GameApp.openTab('tab-orders')">💼 Биржа заказов <span class="badge" id="badge-orders">0</span></button>
+      <button class="nav-btn" data-tab="tab-products" onclick="GameApp.openTab('tab-products')">🚀 Мои продукты <span class="badge" id="badge-products">0</span></button>
+      <button class="nav-btn" data-tab="tab-tech" onclick="GameApp.openTab('tab-tech')">📚 Технологии</button>
+      <button class="nav-btn" data-tab="tab-hardware" onclick="GameApp.openTab('tab-hardware')">🖥️ Оборудование</button>
+      <button class="nav-btn" data-tab="tab-fin" onclick="GameApp.openTab('tab-fin')">📊 Финансы (P&L)</button>
+      <div style="margin-top:auto; padding-top:10px; border-top:1px solid var(--border);">
+        <button class="btn-sm" style="width:100%; margin-bottom:5px;" onclick="GameApp.saveGame('manual')">💾 Сохранить</button>
+        <button class="btn-sm btn-danger" style="width:100%;" onclick="GameApp.quitToMenu()">🚪 В меню</button>
+      </div>
+    </nav>
+
+    <main class="content-area">
+      
+      <!-- Таб: Рабочий стол -->
+      <section id="tab-dash" class="tab-content active">
+        <div class="view-header">
+          <div>
+            <div class="view-title" id="dash-greeting">Рабочее место</div>
+            <div style="color:var(--text-muted); font-size:12px;" id="dash-sub">ПК готов к работе</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-success" onclick="GameApp.takeRest(8)">🛌 Сон (8 часов / +80⚡)</button>
+            <button class="btn-sm" onclick="GameApp.takeRest(2)">☕ Кофе-брейк (+20⚡)</button>
+          </div>
+        </div>
+
+        <div class="grid-cards">
+          <div class="panel-card">
+            <h3>Активная задача</h3>
+            <div id="dash-task-desc" style="color:var(--text-muted);">Задач нет. Возьмите контракт на бирже или запустите продукт.</div>
+            <div class="progress-bar"><div class="progress-fill" id="dash-task-progress"></div></div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span id="dash-task-time" style="font-size:11px; font-family:Consolas, monospace;">0 / 0 ч.</span>
+              <button class="btn-sm btn-danger" id="dash-task-cancel" style="display:none;" onclick="GameApp.cancelTask()">Отменить</button>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h3>Статус компании / Фриланса</h3>
+            <div class="meta-row"><span>Ежемесячная аренда:</span><b class="text-red" id="dash-rent">$0</b></div>
+            <div class="meta-row"><span>Пассивный доход от ПО:</span><b class="text-green" id="dash-passive">$0/день</b></div>
+            <div class="meta-row"><span>Уровень железа:</span><b id="dash-hw-name">ПК начального уровня</b></div>
+            <div class="meta-row"><span>Дней до списания аренды:</span><b id="dash-days-rent">0</b></div>
+          </div>
+
+          <div class="panel-card">
+            <h3>Оперативный журнал событий</h3>
+            <div id="dash-log" style="display:flex; flex-direction:column; gap:6px; max-height:160px; overflow-y:auto; font-size:11px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Таб: Персонаж -->
+      <section id="tab-char" class="tab-content">
+        <div class="view-header"><div class="view-title">Профиль и компетенции</div></div>
+        <div class="grid-cards">
+          <div class="panel-card">
+            <h3>Данные разработчика</h3>
+            <div class="meta-row"><span>Имя:</span><b id="char-name">-</b></div>
+            <div class="meta-row"><span>Возраст:</span><b id="char-age">-</b></div>
+            <div class="meta-row"><span>Локация:</span><b id="char-loc">-</b></div>
+            <div class="meta-row"><span>Черта характера:</span><b class="text-purple" id="char-trait">-</b></div>
+            <div class="meta-row"><span>Всего заработано:</span><b class="text-green" id="char-earned">$0</b></div>
+          </div>
+          <div class="panel-card">
+            <h3>Дерево навыков (EXP)</h3>
+            <div style="display:flex; flex-direction:column; gap:8px;" id="char-skills-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Таб: Биржа заказов -->
+      <section id="tab-orders" class="tab-content">
+        <div class="view-header">
+          <div>
+            <div class="view-title">Биржа коммерческих контрактов</div>
+            <div style="color:var(--text-muted); font-size:12px;">Выполняйте требования стека и сдавайте проекты в срок.</div>
+          </div>
+          <button class="btn-sm" onclick="GameApp.rerollOrders()">↻ Обновить список ($25)</button>
+        </div>
+        <div class="grid-cards" id="orders-container"></div>
+      </section>
+
+      <!-- Таб: Продукты -->
+      <section id="tab-products" class="tab-content">
+        <div class="view-header">
+          <div>
+            <div class="view-title">Фабрика собственных продуктов</div>
+            <div style="color:var(--text-muted); font-size:12px;">Проектируйте ПО, выбирайте стек, устраняйте техдолг и привлекайте пользователей.</div>
+          </div>
+          <button class="btn-primary" onclick="GameApp.openProductWizard()">＋ Спроектировать продукт</button>
+        </div>
+        <div class="grid-cards" id="products-container"></div>
+      </section>
+
+      <!-- Таб: Технологии -->
+      <section id="tab-tech" class="tab-content">
+        <div class="view-header">
+          <div>
+            <div class="view-title">Исторический каталог технологий</div>
+            <div style="color:var(--text-muted); font-size:12px;">Технологии становятся доступны строго в хронологические периоды.</div>
+          </div>
+        </div>
+        <div class="grid-cards" id="tech-container"></div>
+      </section>
+
+      <!-- Таб: Оборудование -->
+      <section id="tab-hardware" class="tab-content">
+        <div class="view-header"><div class="view-title">Рабочая станция и инфраструктура</div></div>
+        <div class="grid-cards" id="hardware-container"></div>
+      </section>
+
+      <!-- Таб: Финансы -->
+      <section id="tab-fin" class="tab-content">
+        <div class="view-header"><div class="view-title">Финансовый отчёт (P&L)</div></div>
+        <div class="grid-cards">
+          <div class="panel-card">
+            <h3>Баланс и активы</h3>
+            <div class="meta-row"><span>Текущий счёт:</span><b class="text-green" id="fin-cash">$0</b></div>
+            <div class="meta-row"><span>Совокупный доход:</span><b class="text-green" id="fin-income">$0</b></div>
+            <div class="meta-row"><span>Совокупные расходы:</span><b class="text-red" id="fin-expenses">$0</b></div>
+            <div class="meta-row"><span>Чистая прибыль:</span><b id="fin-net">$0</b></div>
+          </div>
+          <div class="panel-card">
+            <h3>Финансовые транзакции</h3>
+            <div id="fin-log" style="display:flex; flex-direction:column; gap:5px; max-height:220px; overflow-y:auto; font-size:11px;"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Модальное окно: Мастер создания продукта -->
+<div class="modal-layer" id="modal-product-wizard">
+  <div class="modal-box">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="color:var(--cyan);">Конструктор IT-продукта</h3>
+      <button class="btn-sm" onclick="GameApp.closeProductWizard()">✕</button>
+    </div>
+
+    <!-- Шаг 1 -->
+    <div class="wizard-step active" id="wiz-step-1">
+      <div class="field">
+        <label>Название продукта</label>
+        <input type="text" id="wiz-name" value="QuickWeb Engine">
+      </div>
+      <div class="field">
+        <label>Категория программного обеспечения</label>
+        <select id="wiz-type">
+          <option value="utility">Системная утилита / Драйвер (Низкий порог, стабильный спрос)</option>
+          <option value="web_service">Веб-портал / Форум (Требует веб-стек, монетизация рекламой)</option>
+          <option value="desktop_app">Десктопное приложение / Редактор (Классические продажи коробок)</option>
+          <option value="game">Компьютерная игра (Высокий доход при хите, высокий риск)</option>
+        </select>
+      </div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn-primary" onclick="GameApp.wizGoStep(2)">Далее: Стек технологий →</button>
+      </div>
+    </div>
+
+    <!-- Шаг 2 -->
+    <div class="wizard-step" id="wiz-step-2">
+      <div class="field">
+        <label>Базовый язык программирования</label>
+        <select id="wiz-lang"></select>
+      </div>
+      <div class="field">
+        <label>Глубина тестирования и архитектуры</label>
+        <select id="wiz-arch">
+          <option value="fast">MVP без тестов (+50% к скорости, много багов и техдолга)</option>
+          <option value="balanced" selected>Сбалансированная разработка (Нормальное качество)</option>
+          <option value="solid">Монолитная надежность (-30% к скорости, минимум багов)</option>
+        </select>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <button onclick="GameApp.wizGoStep(1)">← Назад</button>
+        <button class="btn-primary" onclick="GameApp.wizGoStep(3)">Далее: Монетизация →</button>
+      </div>
+    </div>
+
+    <!-- Шаг 3 -->
+    <div class="wizard-step" id="wiz-step-3">
+      <div class="field">
+        <label>Модель распространения и монетизации</label>
+        <select id="wiz-monetization">
+          <option value="shareware">Условно-бесплатная (Shareware / Разовая покупка)</option>
+          <option value="ads">Бесплатный продукт с рекламой (Зависит от числа пользователей)</option>
+          <option value="sub">Подписочная модель (Стабильный доход, требует постоянных апдейтов)</option>
+        </select>
+      </div>
+      <div class="panel-card" style="background:#090d16;">
+        <div class="meta-row"><span>Оценочное время разработки:</span><b id="wiz-eval-hours">0 ч.</b></div>
+        <div class="meta-row"><span>Бюджет на запуск и маркетинг:</span><b id="wiz-eval-cost">$120</b></div>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <button onclick="GameApp.wizGoStep(2)">← Назад</button>
+        <button class="btn-success" onclick="GameApp.startProductCreation()">Запустить разработку</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-shelf" id="toast-shelf"></div>
+
+<script>
+/**
+ * program.in v1.1 - Архитектура единого файла
+ */
+
+// Каталог исторического появления технологий
+const TECH_REGISTRY = [
+  { id: 'asm', name: 'Ассемблер и низкоуровневый C', year: 2000, cost: 80, hours: 24, skill: 'sys', exp: 15, desc: 'Глубокое понимание архитектуры процессоров и памяти.' },
+  { id: 'html_css', name: 'HTML 4.01 и ранний CSS', year: 2000, cost: 0, hours: 14, skill: 'web', exp: 12, desc: 'Основа сайтов эпохи Web 1.0 с табличной версткой.' },
+  { id: 'perl_cgi', name: 'Perl & CGI-скрипты', year: 2000, cost: 90, hours: 20, skill: 'web', exp: 14, desc: 'Первая волна динамического веба на серверных скриптах.' },
+  { id: 'cpp', name: 'C++ и Win32 API', year: 2000, cost: 120, hours: 32, skill: 'sys', exp: 20, desc: 'Стандарт разработки коммерческого ПО и трехмерных движков.' },
+  { id: 'php3', name: 'PHP 3 / PHP 4 и MySQL', year: 2001, cost: 140, hours: 22, skill: 'web', exp: 18, desc: 'Революция доступных баз данных и движков блогов.' },
+  { id: 'java', name: 'Java 2 (J2SE / Swing)', year: 2001, cost: 160, hours: 28, skill: 'sys', exp: 20, desc: 'Кроссплатформенное корпоративное программирование.' },
+  { id: 'python', name: 'Python 2.x', year: 2002, cost: 180, hours: 26, skill: 'web', exp: 22, desc: 'Быстрое прототипирование и элегантные алгоритмы.' },
+  { id: 'csharp', name: 'C# и .NET Framework', year: 2003, cost: 240, hours: 30, skill: 'sys', exp: 24, desc: 'Современный ответ Microsoft языку Java.' },
+  { id: 'ajax', name: 'AJAX и Web 2.0', year: 2005, cost: 300, hours: 25, skill: 'web', exp: 25, desc: 'Бесшовная подгрузка данных без перезагрузки страницы.' },
+  { id: 'ruby', name: 'Ruby on Rails', year: 2006, cost: 380, hours: 28, skill: 'web', exp: 28, desc: 'Концепция convention over configuration для стартапов.' },
+  { id: 'smartphones', name: 'iOS SDK & Android Java', year: 2008, cost: 550, hours: 45, skill: 'sys', exp: 35, desc: 'Мобильная революция и карманные компьютеры.' },
+  { id: 'nodejs', name: 'Node.js и V8 Runtime', year: 2010, cost: 650, hours: 35, skill: 'web', exp: 35, desc: 'Высоконагруженный JavaScript на стороне сервера.' },
+  { id: 'cloud', name: 'Облачные кластеры (AWS/DevOps)', year: 2013, cost: 900, hours: 40, skill: 'sys', exp: 40, desc: 'Инфраструктура как код и микросервисы.' },
+  { id: 'rust_go', name: 'Go & Rust Systems', year: 2016, cost: 1200, hours: 50, skill: 'sys', exp: 45, desc: 'Безопасная работа с памятью и параллелизм.' },
+  { id: 'ai_stack', name: 'AI Engineering & LLM APIs', year: 2023, cost: 2500, hours: 60, skill: 'web', exp: 60, desc: 'Нейросетевые инструменты и интеллектуальная автоматизация.' }
+];
+
+// Каталог железа
+const HARDWARE_CATALOG = [
+  { level: 0, name: 'ПК на базе Intel 486 (16 МБ ОЗУ)', cost: 0, speedMult: 1.0, rentPenalty: 0 },
+  { level: 1, name: 'Pentium II / CRT 17" (64 МБ ОЗУ)', cost: 450, speedMult: 1.35, rentPenalty: 10 },
+  { level: 2, name: 'Pentium 4 Dual-Monitor (256 МБ ОЗУ)', cost: 1200, speedMult: 1.8, rentPenalty: 25 },
+  { level: 3, name: 'Intel Core 2 Quad Workstation', cost: 2800, speedMult: 2.4, rentPenalty: 50 },
+  { level: 4, name: 'Современный кластер с SSD и NVMe', cost: 6500, speedMult: 3.2, rentPenalty: 90 }
+];
+
+// Шаблоны биржи заказов
+const CONTRACT_TEMPLATES = [
+  { title: 'Сверстать персональный сайт на таблицах', skill: 'web', reqTech: 'html_css', baseHours: 12, pay: 160, repReq: 0 },
+  { title: 'Исправить ошибки в скрипте гостевой книги', skill: 'web', reqTech: 'html_css', baseHours: 8, pay: 120, repReq: 0 },
+  { title: 'Написать утилиту сжатия логов для Windows', skill: 'sys', reqTech: 'cpp', baseHours: 24, pay: 420, repReq: 5 },
+  { title: 'Создать каталог товаров на Perl/CGI', skill: 'web', reqTech: 'perl_cgi', baseHours: 26, pay: 480, repReq: 8 },
+  { title: 'Разработать модуль авторизации на PHP', skill: 'web', reqTech: 'php3', baseHours: 20, pay: 520, repReq: 12 },
+  { title: 'Бизнес-приложение учёта складов на Java', skill: 'sys', reqTech: 'java', baseHours: 42, pay: 1100, repReq: 20 },
+  { title: 'Оптимизировать производительность системного сервиса', skill: 'sys', reqTech: 'cpp', baseHours: 35, pay: 980, repReq: 25 },
+  { title: 'Скрипт автоматического парсинга на Python', skill: 'web', reqTech: 'python', baseHours: 22, pay: 750, repReq: 22 },
+  { title: 'Разработать интерактивный чат на AJAX', skill: 'web', reqTech: 'ajax', baseHours: 30, pay: 1300, repReq: 35 },
+  { title: 'Разработка корпоративной CRM на .NET', skill: 'sys', reqTech: 'csharp', baseHours: 55, pay: 2400, repReq: 45 }
+];
+
+class GameEngine {
+  constructor() {
+    this.state = null;
+    this.speed = 1;
+    this.timer = null;
+    this.lastLoopTime = Date.now();
+  }
+
+  init() {
+    this.checkAutoSaveAvailability();
+  }
+
+  checkAutoSaveAvailability() {
+    const raw = localStorage.getItem('program_in_save_auto');
+    const btn = document.getElementById('btn-quick-load');
+    if (btn) btn.disabled = !raw;
+  }
+
+  createNewGame(params) {
+    const rentMap = { sf: 1800, msk: 550, ber: 1100, blr: 280 };
+    let initialCash = 600;
+    let initialDebt = 0;
+    let baseRep = 10;
+    let bonusSkills = { web: 5, sys: 5 };
+
+    if (params.scenario === 'grad') {
+      initialCash = 1200;
+      bonusSkills.web += 10;
+      bonusSkills.sys += 10;
+    } else if (params.scenario === 'freelance') {
+      initialCash = 900;
+      baseRep = 22;
+      bonusSkills[params.spec] += 12;
+    } else if (params.scenario === 'debt') {
+      initialCash = 3500;
+      initialDebt = 3000;
+    }
+
+    if (params.spec === 'web') bonusSkills.web += 12;
+    if (params.spec === 'sys') bonusSkills.sys += 12;
+    if (params.spec === 'game') { bonusSkills.sys += 8; bonusSkills.web += 4; }
+
+    this.state = {
+      version: '1.1',
+      character: {
+        name: params.name,
+        age: params.age,
+        location: params.location,
+        spec: params.spec,
+        scenario: params.scenario,
+        trait: params.trait,
+        skills: bonusSkills
+      },
+      time: { year: 2000, month: 1, day: 1, hour: 8 },
+      stats: {
+        cash: initialCash - initialDebt,
+        debt: initialDebt,
+        energy: 100,
+        reputation: baseRep,
+        totalEarned: Math.max(0, initialCash - initialDebt),
+        totalExpenses: 0,
+        bankruptcyDays: 0
+      },
+      hardwareLevel: 0,
+      learnedTechs: ['html_css'], // Базовое знание на старте
+      activeTask: null, // { type: 'contract'|'tech'|'product', id, name, progress, total, data }
+      contracts: [],
+      products: [],
+      financeLog: [],
+      eventLog: [],
+      daysUntilRent: 30
+    };
+
+    this.logEvent('Карьера начата! На дворе 1 января 2000 года.');
+    this.recordFinance(initialCash, 'Стартовый капитал');
+    this.refreshAvailableContracts();
+    this.saveGame('auto');
+    this.showScreen('screen-game');
+    this.renderAll();
+    this.startLoop();
+  }
+
+  startLoop() {
+    if (this.timer) clearInterval(this.timer);
+    this.lastLoopTime = Date.now();
+    this.timer = setInterval(() => this.tick(), 250);
+  }
+
+  setSpeed(val) {
+    this.speed = val;
+    [0, 1, 2, 5].forEach(s => {
+      const b = document.getElementById('btn-sp-' + s);
+      if (b) {
+        b.className = 'btn-sm' + (s === val ? ' btn-primary' : '');
+      }
+    });
+    this.toast(val === 0 ? 'Пауза' : `Скорость: ${val}x`);
+  }
+
+  tick() {
+    if (!this.state || this.speed === 0) return;
+    
+    // 1 игровая секунда реального времени на 1x = 1 игровой час
+    const steps = this.speed;
+    for (let s = 0; s < steps; s++) {
+      this.advanceHour();
+    }
+    this.renderHUD();
+  }
+
+  advanceHour() {
+    const t = this.state.time;
+    t.hour++;
+
+    // Расход энергии во время активных задач
+    if (this.state.activeTask) {
+      let energyCost = 1.2;
+      if (this.state.character.trait === 'workaholic') energyCost *= 0.8;
+      this.state.stats.energy = Math.max(0, this.state.stats.energy - energyCost);
+      
+      this.processTaskHour();
+      
+      if (this.state.stats.energy <= 0) {
+        this.toast('Истощение! Вам необходим отдых.', 'red');
+        this.cancelTask();
+      }
+    } else {
+      // Пассивный расход энергии при бодрствовании
+      this.state.stats.energy = Math.max(0, this.state.stats.energy - 0.15);
+    }
+
+    if (t.hour >= 24) {
+      t.hour = 0;
+      this.advanceDay();
+    }
+  }
+
+  advanceDay() {
+    const t = this.state.time;
+    t.day++;
+    this.state.daysUntilRent--;
+
+    // Обработка продуктов (пассивный доход и отток пользователей)
+    this.processProductsDaily();
+
+    // Раз в 3 дня обновление контрактов
+    if (t.day % 3 === 0) {
+      this.decayContractsDeadline();
+    }
+
+    // Проверка наступления нового месяца
+    if (t.day > 30) {
+      t.day = 1;
+      t.month++;
+      if (t.month > 12) {
+        t.month = 1;
+        t.year++;
+        this.state.character.age++;
+        this.logEvent(`С Новым ${t.year} годом! Вам исполнилось ${this.state.character.age}.`);
+      }
+      this.executeMonthlyRent();
+    }
+
+    // Проверка угрозы банкротства
+    if (this.state.stats.cash < -1500) {
+      this.state.stats.bankruptcyDays++;
+      if (this.state.stats.bankruptcyDays >= 30) {
+        this.triggerBankruptcyGameOver();
+        return;
+      } else {
+        this.toast(`Внимание! У вас долг. До банкротства: ${30 - this.state.stats.bankruptcyDays} дн.`, 'red');
+      }
+    } else {
+      this.state.stats.bankruptcyDays = 0;
+    }
+
+    this.renderDashboard();
+    this.saveGame('auto');
+  }
+
+  executeMonthlyRent() {
+    const rentMap = { sf: 1800, msk: 550, ber: 1100, blr: 280 };
+    const baseRent = rentMap[this.state.character.location] || 500;
+    const hwPenalty = HARDWARE_CATALOG[this.state.hardwareLevel].rentPenalty;
+    const totalRent = baseRent + hwPenalty;
+
+    this.deductCash(totalRent, `Аренда жилья и электричество`);
+    this.state.daysUntilRent = 30;
+    this.logEvent(`Списаны ежемесячные обязательные расходы: $${totalRent}`);
+    this.toast(`Аренда оплачена: -$${totalRent}`);
+  }
+
+  processProductsDaily() {
+    if (!this.state.products.length) return;
+
+    this.state.products.forEach(p => {
+      // Доход зависит от рейтинга, цены и базы пользователей
+      let baseProfit = 0;
+      if (p.monetization === 'shareware') {
+        const sales = Math.round(p.users * 0.035 * (p.quality / 100));
+        baseProfit = sales * p.price;
+        p.users = Math.max(10, p.users - Math.round(p.users * 0.05));
+      } else if (p.monetization === 'ads') {
+        baseProfit = Math.round((p.users * 0.08) * (p.quality / 100));
+        p.users += Math.round(15 * (p.quality / 50));
+      } else if (p.monetization === 'sub') {
+        baseProfit = Math.round(p.users * (p.price * 0.25));
+        // Баги снижают удержание подписчиков
+        if (p.bugs > 20) p.users = Math.max(5, p.users - 8);
+      }
+
+      if (this.state.character.trait === 'merchant') baseProfit = Math.round(baseProfit * 1.15);
+
+      if (baseProfit > 0) {
+        p.totalRevenue += baseProfit;
+        this.addCash(baseProfit, `Доход от продукта ${p.name}`);
+      }
+    });
+  }
+
+  processTaskHour() {
+    const task = this.state.activeTask;
+    const hwMult = HARDWARE_CATALOG[this.state.hardwareLevel].speedMult;
+    task.progress += 1 * hwMult;
+
+    if (task.progress >= task.total) {
+      this.completeCurrentTask();
+    }
+  }
+
+  completeCurrentTask() {
+    const task = this.state.activeTask;
+    this.state.activeTask = null;
+
+    if (task.type === 'contract') {
+      let reward = task.data.pay;
+      if (this.state.character.trait === 'merchant') reward = Math.round(reward * 1.15);
+      
+      this.addCash(reward, `Оплата контракта: ${task.name}`);
+      this.state.stats.reputation += Math.max(1, Math.round(reward / 250));
+      
+      // Начисление навыков
+      const sk = task.data.skill;
+      this.state.character.skills[sk] = (this.state.character.skills[sk] || 0) + 4;
+
+      this.toast(`Контракт сдан! Получено $${reward}`, 'green');
+      this.logEvent(`Успешно завершен контракт «${task.name}» (+$${reward})`);
+      
+      // Удаляем из списка
+      this.state.contracts = this.state.contracts.filter(c => c.id !== task.data.id);
+      this.renderOrders();
+
+    } else if (task.type === 'tech') {
+      this.state.learnedTechs.push(task.data.id);
+      const sk = task.data.skill;
+      this.state.character.skills[sk] = (this.state.character.skills[sk] || 0) + task.data.exp;
+      
+      this.toast(`Изучена технология: ${task.name}!`, 'green');
+      this.logEvent(`Освоена новая компетенция: ${task.name}`);
+      this.renderTech();
+
+    } else if (task.type === 'product') {
+      const prod = task.data;
+      this.state.products.push(prod);
+      this.state.stats.reputation += 4;
+      this.toast(`Продукт «${prod.name}» успешно запущен!`, 'green');
+      this.logEvent(`Релиз продукта «${prod.name}» на рынок!`);
+      this.renderProducts();
+    }
+
+    this.renderAll();
+  }
+
+  takeRest(hours) {
+    if (this.state.activeTask) {
+      this.toast('Нельзя спать во время срочной задачи. Сначала завершите её.', 'red');
+      return;
+    }
+    for (let i = 0; i < hours; i++) {
+      this.state.time.hour++;
+      this.state.stats.energy = Math.min(100, this.state.stats.energy + (hours === 8 ? 10 : 10));
+      if (this.state.time.hour >= 24) {
+        this.state.time.hour = 0;
+        this.advanceDay();
+      }
+    }
+    this.toast(`Вы отдохнули ${hours} ч. Энергия восстановлена.`);
+    this.renderAll();
+  }
+
+  cancelTask() {
+    if (!this.state.activeTask) return;
+    if (this.state.activeTask.type === 'contract') {
+      this.state.stats.reputation = Math.max(0, this.state.stats.reputation - 3);
+      this.logEvent(`Контракт «${this.state.activeTask.name}» сорван. Репутация понижена.`);
+    }
+    this.state.activeTask = null;
+    this.toast('Задача отменена.');
+    this.renderDashboard();
+  }
+
+  // Финансы
+  addCash(amount, reason) {
+    this.state.stats.cash += amount;
+    this.state.stats.totalEarned += amount;
+    this.recordFinance(amount, reason);
+  }
+
+  deductCash(amount, reason) {
+    this.state.stats.cash -= amount;
+    this.state.stats.totalExpenses += amount;
+    this.recordFinance(-amount, reason);
+  }
+
+  recordFinance(amount, desc) {
+    const dateStr = `${this.state.time.day}.${this.state.time.month}.${this.state.time.year}`;
+    this.state.financeLog.unshift({ date: dateStr, amount, desc });
+    if (this.state.financeLog.length > 40) this.state.financeLog.pop();
+  }
+
+  logEvent(msg) {
+    const timeStr = `${String(this.state.time.day).padStart(2,'0')}.${String(this.state.time.month).padStart(2,'0')}.${this.state.time.year}`;
+    this.state.eventLog.unshift(`[${timeStr}]${msg}`);
+    if (this.state.eventLog.length > 50) this.state.eventLog.pop();
+  }
+
+  refreshAvailableContracts() {
+    const list = [];
+    let idSeq = Date.now();
+    
+    CONTRACT_TEMPLATES.forEach(tpl => {
+      // Проверка доступности технологии
+      if (!this.state.learnedTechs.includes(tpl.reqTech)) return;
+      if (this.state.stats.reputation < tpl.repReq) return;
+
+      const variance = 0.85 + Math.random() * 0.35;
+      list.push({
+        id: idSeq++,
+        title: tpl.title,
+        skill: tpl.skill,
+        hours: Math.round(tpl.baseHours * variance),
+        pay: Math.round(tpl.pay * variance),
+        deadlineDays: Math.round(tpl.baseHours / 6) + 4
+      });
+    });
+    this.state.contracts = list.slice(0, 5);
+  }
+
+  rerollOrders() {
+    if (this.state.stats.cash < 25) {
+      this.toast('Недостаточно средств для обновления биржи!', 'red');
+      return;
+    }
+    this.deductCash(25, 'Платный доступ к бирже заказов');
+    this.refreshAvailableContracts();
+    this.renderOrders();
+    this.toast('Биржа заказов обновлена.');
+  }
+
+  decayContractsDeadline() {
+    this.state.contracts.forEach(c => c.deadlineDays--);
+    this.state.contracts = this.state.contracts.filter(c => c.deadlineDays > 0);
+    if (this.state.contracts.length < 3) {
+      this.refreshAvailableContracts();
+    }
+    this.renderOrders();
+  }
+
+  takeContract(id) {
+    if (this.state.activeTask) {
+      this.toast('У вас уже есть задача в работе!', 'red');
+      return;
+    }
+    const contract = this.state.contracts.find(c => c.id === id);
+    if (!contract) return;
+
+    this.state.activeTask = {
+      type: 'contract',
+      id: contract.id,
+      name: contract.title,
+      progress: 0,
+      total: contract.hours,
+      data: contract
+    };
+
+    this.toast(`Контракт взят: ${contract.title}`);
+    this.renderDashboard();
+  }
+
+  studyTech(techId) {
+    if (this.state.activeTask) {
+      this.toast('Сначала завершите текущую задачу!', 'red');
+      return;
+    }
+    const t = TECH_REGISTRY.find(x => x.id === techId);
+    if (!t) return;
+
+    if (this.state.stats.cash < t.cost) {
+      this.toast('Недостаточно денег для курса/книг!', 'red');
+      return;
+    }
+
+    this.deductCash(t.cost, `Изучение технологии: ${t.name}`);
+    
+    let totalHours = t.hours;
+    if (this.state.character.trait === 'fast_learner') totalHours = Math.round(totalHours * 0.75);
+
+    this.state.activeTask = {
+      type: 'tech',
+      id: t.id,
+      name: `Обучение: ${t.name}`,
+      progress: 0,
+      total: totalHours,
+      data: t
+    };
+
+    this.toast(`Начато изучение: ${t.name}`);
+    this.renderDashboard();
+  }
+
+  buyHardware(lvl) {
+    const hw = HARDWARE_CATALOG[lvl];
+    if (!hw) return;
+    if (this.state.stats.cash < hw.cost) {
+      this.toast('Недостаточно средств на модернизацию!', 'red');
+      return;
+    }
+
+    this.deductCash(hw.cost, `Покупка оборудования: ${hw.name}`);
+    this.state.hardwareLevel = lvl;
+    this.toast(`Оборудование обновлено: ${hw.name}!`, 'green');
+    this.logEvent(`Куплено новое оборудование: ${hw.name}`);
+    this.renderHardware();
+    this.renderDashboard();
+  }
+
+  // Визард продуктов
+  initProductWizard() {
+    const select = document.getElementById('wiz-lang');
+    select.innerHTML = '';
+    // Выбираем только те языки из регистра, которые изучены
+    TECH_REGISTRY.filter(t => this.state.learnedTechs.includes(t.id)).forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = `${t.name} (${t.skill.toUpperCase()})`;
+      select.appendChild(opt);
+    });
+
+    if (select.children.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = 'html_css';
+      opt.textContent = 'HTML 4.01';
+      select.appendChild(opt);
+    }
+
+    this.calcWizEstimates();
+  }
+
+  calcWizEstimates() {
+    const type = document.getElementById('wiz-type').value;
+    const arch = document.getElementById('wiz-arch').value;
+    
+    let hours = 35;
+    let cost = 120;
+
+    if (type === 'web_service') { hours = 50; cost = 200; }
+    if (type === 'desktop_app') { hours = 75; cost = 350; }
+    if (type === 'game') { hours = 95; cost = 500; }
+
+    if (arch === 'fast') { hours = Math.round(hours * 0.65); cost = Math.round(cost * 0.7); }
+    if (arch === 'solid') { hours = Math.round(hours * 1.35); cost = Math.round(cost * 1.4); }
+
+    document.getElementById('wiz-eval-hours').textContent = `${hours} ч.`;
+    document.getElementById('wiz-eval-cost').textContent = `$${cost}`;
+    return { hours, cost };
+  }
+
+  startProductCreation() {
+    if (this.state.activeTask) {
+      this.toast('Завершите текущую работу!', 'red');
+      return;
+    }
+
+    const est = this.calcWizEstimates();
+    if (this.state.stats.cash < est.cost) {
+      this.toast('Недостаточно капитала для разработки и релиза!', 'red');
+      return;
+    }
+
+    const name = document.getElementById('wiz-name').value.trim() || 'Продукт #1';
+    const type = document.getElementById('wiz-type').value;
+    const lang = document.getElementById('wiz-lang').value;
+    const arch = document.getElementById('wiz-arch').value;
+    const mon = document.getElementById('wiz-monetization').value;
+
+    this.deductCash(est.cost, `Запуск проекта ${name}`);
+
+    // Расчет стартового качества
+    let quality = 60;
+    let bugs = 10;
+    if (arch === 'fast') { quality -= 15; bugs += 25; }
+    if (arch === 'solid') { quality += 25; bugs -= 8; }
+    if (this.state.character.trait === 'clean_code') bugs = Math.round(bugs * 0.65);
+
+    const productPayload = {
+      id: Date.now(),
+      name,
+      type,
+      lang,
+      monetization: mon,
+      quality: Math.max(20, Math.min(100, quality)),
+      bugs: Math.max(0, bugs),
+      users: mon === 'ads' ? 120 : 30,
+      price: mon === 'shareware' ? 19 : mon === 'sub' ? 5 : 0,
+      totalRevenue: 0
+    };
+
+    this.state.activeTask = {
+      type: 'product',
+      id: productPayload.id,
+      name: `Разработка: ${name}`,
+      progress: 0,
+      total: est.hours,
+      data: productPayload
+    };
+
+    this.closeProductWizard();
+    this.toast(`Проект «${name}» запущен в разработку!`);
+    this.renderDashboard();
+  }
+
+  triggerBankruptcyGameOver() {
+    this.setSpeed(0);
+    alert('Банкротство! Вы не смогли ликвидировать долги компании за 30 дней. Ваша студия ликвидирована.');
+    this.showScreen('screen-menu');
+    localStorage.removeItem('program_in_save_auto');
+    this.checkAutoSaveAvailability();
+  }
+
+  // Рендеринг интерфейса
+  renderHUD() {
+    if (!this.state) return;
+    const s = this.state;
+    document.getElementById('hud-date').textContent = `${String(s.time.day).padStart(2,'0')}.${String(s.time.month).padStart(2,'0')}.${s.time.year}`;
+    
+    const cashEl = document.getElementById('hud-cash');
+    cashEl.textContent = `$${s.stats.cash.toLocaleString()}`;
+    cashEl.className = s.stats.cash < 0 ? 'text-red' : 'text-green';
+
+    document.getElementById('hud-energy').textContent = `${Math.round(s.stats.energy)}%`;
+    document.getElementById('hud-rep').textContent = s.stats.reputation;
+    
+    // Эпоха
+    const y = s.time.year;
+    let era = 'Dial-up & Dot-com';
+    if (y >= 2005) era = 'Web 2.0 & AJAX';
+    if (y >= 2008) era = 'Mobile Explosion';
+    if (y >= 2014) era = 'Cloud & Big Tech';
+    if (y >= 2022) era = 'AI Transformation';
+    document.getElementById('hud-era').textContent = `${y} ·${era}`;
+  }
+
+  renderDashboard() {
+    this.renderHUD();
+    const s = this.state;
+    
+    document.getElementById('dash-greeting').textContent = `${s.character.name}`;
+    document.getElementById('dash-sub').textContent = `${s.character.age} лет, ${s.character.location.toUpperCase()} ·${s.character.spec.toUpperCase()}`;
+
+    // Активная задача
+    const taskDesc = document.getElementById('dash-task-desc');
+    const taskProg = document.getElementById('dash-task-progress');
+    const taskTime = document.getElementById('dash-task-time');
+    const taskCancel = document.getElementById('dash-task-cancel');
+
+    if (s.activeTask) {
+      taskDesc.textContent = s.activeTask.name;
+      const pct = Math.min(100, Math.round((s.activeTask.progress / s.activeTask.total) * 100));
+      taskProg.style.width = pct + '%';
+      taskTime.textContent = `${Math.round(s.activeTask.progress)} / ${s.activeTask.total} ч. (${pct}%)`;
+      taskCancel.style.display = 'block';
+    } else {
+      taskDesc.textContent = 'Простаивает. Выберите контракт или запустите проект.';
+      taskProg.style.width = '0%';
+      taskTime.textContent = '0 / 0 ч.';
+      taskCancel.style.display = 'none';
+    }
+
+    // Сводка
+    const rentMap = { sf: 1800, msk: 550, ber: 1100, blr: 280 };
+    document.getElementById('dash-rent').textContent = `$${rentMap[s.character.location] || 500}/мес`;
+    document.getElementById('dash-hw-name').textContent = HARDWARE_CATALOG[s.hardwareLevel].name;
+    document.getElementById('dash-days-rent').textContent = s.daysUntilRent;
+
+    // Пассивный доход
+    let dailyPassive = 0;
+    s.products.forEach(p => {
+      if (p.monetization === 'shareware') dailyPassive += Math.round(p.users * 0.035 * (p.quality/100) * p.price);
+      if (p.monetization === 'ads') dailyPassive += Math.round((p.users * 0.08) * (p.quality/100));
+      if (p.monetization === 'sub') dailyPassive += Math.round(p.users * (p.price * 0.25));
+    });
+    document.getElementById('dash-passive').textContent = `~$${dailyPassive}/день`;
+
+    // Лог
+    const logBox = document.getElementById('dash-log');
+    logBox.innerHTML = s.eventLog.slice(0, 7).map(e => `<div>${e}</div>`).join('');
+
+    // Бейджи
+    document.getElementById('badge-orders').textContent = s.contracts.length;
+    document.getElementById('badge-products').textContent = s.products.length;
+  }
+
+  renderCharacter() {
+    const s = this.state;
+    document.getElementById('char-name').textContent = s.character.name;
+    document.getElementById('char-age').textContent = `${s.character.age} лет`;
+    document.getElementById('char-loc').textContent = s.character.location.toUpperCase();
+    document.getElementById('char-trait').textContent = s.character.trait;
+    document.getElementById('char-earned').textContent = `$${s.stats.totalEarned.toLocaleString()}`;
+
+    const skBox = document.getElementById('char-skills-list');
+    skBox.innerHTML = '';
+    for (const [k, v] of Object.entries(s.character.skills)) {
+      const row = document.createElement('div');
+      row.className = 'meta-row';
+      row.innerHTML = `<span>Специализация ${k.toUpperCase()}:</span><b>${v} EXP</b>`;
+      skBox.appendChild(row);
+    }
+  }
+
+  renderOrders() {
+    const c = document.getElementById('orders-container');
+    c.innerHTML = '';
+    if (this.state.contracts.length === 0) {
+      c.innerHTML = '<div style="color:var(--text-muted);">Доступных контрактов нет. Обновите биржу или изучите технологии.</div>';
+      return;
+    }
+
+    this.state.contracts.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'panel-card';
+      card.innerHTML = `
+        <h3>${item.title}</h3>
+        <div class="meta-row"><span>Направление:</span><b>${item.skill.toUpperCase()}</b></div>         <div class="meta-row"><span>Оплата:</span><b class="text-green">$${item.pay}</b></div>
+        <div class="meta-row"><span>Трудозатраты:</span><b>~${item.hours} ч.</b></div>
+        <div class="meta-row"><span>Дедлайн на бирже:</span><b>${item.deadlineDays} дн.</b></div>
+        <button class="btn-primary" onclick="GameApp.takeContract(${item.id})">Взять в работу</button>
+      `;
+      c.appendChild(card);
+    });
+  }
+
+  renderProducts() {
+    const c = document.getElementById('products-container');
+    c.innerHTML = '';
+    if (this.state.products.length === 0) {
+      c.innerHTML = '<div style="color:var(--text-muted);">У вас пока нет запущенных продуктов. Нажмите кнопку выше, чтобы спроектировать первый сервис!</div>';
+      return;
+    }
+
+    this.state.products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'panel-card';
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between;">
+          <h3>${p.name}</h3>
+          <span style="font-size:11px; color:var(--cyan); font-family:Consolas, monospace;">${p.monetization.toUpperCase()}</span>
+        </div>
+        <div class="meta-row"><span>Качество кода:</span><b>${p.quality}/100</b></div>
+        <div class="meta-row"><span>Активных пользователей:</span><b>${p.users.toLocaleString()}</b></div>         <div class="meta-row"><span>Суммарная выручка:</span><b class="text-green">$${p.totalRevenue.toLocaleString()}</b></div>
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <button class="btn-sm" onclick="GameApp.patchProduct(${p.id})">🛠 Багфикс ($60)</button>
+          <button class="btn-sm btn-primary" onclick="GameApp.marketProduct(${p.id})">📢 Реклама ($150)</button>
+        </div>
+      `;
+      c.appendChild(card);
+    });
+  }
+
+  patchProduct(id) {
+    const p = this.state.products.find(x => x.id === id);
+    if (!p) return;
+    if (this.state.stats.cash < 60) {
+      this.toast('Недостаточно денег для выпуска хотфикса!', 'red');
+      return;
+    }
+    this.deductCash(60, `Хотфикс для ${p.name}`);
+    p.quality = Math.min(100, p.quality + 8);
+    this.toast(`Патч для ${p.name} выпущен. Качество повышено!`);
+    this.renderProducts();
+  }
+
+  marketProduct(id) {
+    const p = this.state.products.find(x => x.id === id);
+    if (!p) return;
+    if (this.state.stats.cash < 150) {
+      this.toast('Недостаточно денег на рекламу!', 'red');
+      return;
+    }
+    this.deductCash(150, `Маркетинг для ${p.name}`);
+    p.users += Math.round(p.users * 0.45) + 35;
+    this.toast(`Рекламная кампания привлекла новых пользователей!`);
+    this.renderProducts();
+  }
+
+  renderTech() {
+    const c = document.getElementById('tech-container');
+    c.innerHTML = '';
+    const currentYear = this.state.time.year;
+
+    TECH_REGISTRY.forEach(t => {
+      const isLearned = this.state.learnedTechs.includes(t.id);
+      const isLockedByYear = t.year > currentYear;
+
+      const card = document.createElement('div');
+      card.className = 'panel-card';
+      card.style.opacity = isLockedByYear ? '0.45' : '1';
+
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>${t.name}</h3>
+          <span style="font-size:11px; color:var(--text-muted); font-family:Consolas, monospace;">${t.year} год</span>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted);">${t.desc}</p>         <div class="meta-row"><span>Стоимость:</span><b class="text-green">$${t.cost}</b></div>
+        <div class="meta-row"><span>Срок изучения:</span><b>${t.hours} ч.</b></div>
+        <button class="${isLearned ? 'btn-success' : 'btn-primary'}" 
+          ${isLearned || isLockedByYear ? 'disabled' : ''} 
+          onclick="GameApp.studyTech('${t.id}')">
+          ${isLearned ? '✓ Изучено' : isLockedByYear ? `🔒 Доступно с ${t.year} г.` : 'Освоить технологию'}
+        </button>
+      `;
+      c.appendChild(card);
+    });
+  }
+
+  renderHardware() {
+    const c = document.getElementById('hardware-container');
+    c.innerHTML = '';
+
+    HARDWARE_CATALOG.forEach((hw, idx) => {
+      const isCurrent = this.state.hardwareLevel === idx;
+      const isBought = this.state.hardwareLevel >= idx;
+
+      const card = document.createElement('div');
+      card.className = 'panel-card';
+      card.innerHTML = `
+        <h3>${hw.name}</h3>
+        <div class="meta-row"><span>Скорость работы/компиляции:</span><b class="text-cyan">${hw.speedMult}x</b></div>
+        <div class="meta-row"><span>Надбавка к расходам:</span><b class="text-red">+$${hw.rentPenalty}/мес</b></div>         <div class="meta-row"><span>Стоимость покупки:</span><b class="text-green">$${hw.cost}</b></div>
+        <button class="${isCurrent ? 'btn-success' : 'btn-primary'}" 
+          ${isBought ? 'disabled' : ''} 
+          onclick="GameApp.buyHardware(${idx})">
+          ${isCurrent ? '● Установлено' : isBought ? 'Куплено' : 'Приобрести'}
+        </button>
+      `;
+      c.appendChild(card);
+    });
+  }
+
+  renderFinances() {
+    const s = this.state;
+    document.getElementById('fin-cash').textContent = `$${s.stats.cash.toLocaleString()}`;
+    document.getElementById('fin-income').textContent = `$${s.stats.totalEarned.toLocaleString()}`;
+    document.getElementById('fin-expenses').textContent = `$${s.stats.totalExpenses.toLocaleString()}`;
+    
+    const net = s.stats.totalEarned - s.stats.totalExpenses;
+    const netEl = document.getElementById('fin-net');
+    netEl.textContent = `$${net.toLocaleString()}`;
+    netEl.className = net >= 0 ? 'text-green' : 'text-red';
+
+    const logBox = document.getElementById('fin-log');
+    logBox.innerHTML = s.financeLog.map(f => `
+      <div class="meta-row" style="border-bottom:1px solid #1c273c; padding:3px 0;">
+        <span>${f.date} ·${f.desc}</span>
+        <b class="${f.amount >= 0 ? 'text-green' : 'text-red'}">${f.amount >= 0 ? '+' : ''}$${f.amount}</b>
+      </div>
+    `).join('');
+  }
+
+  renderAll() {
+    this.renderDashboard();
+    this.renderCharacter();
+    this.renderOrders();
+    this.renderProducts();
+    this.renderTech();
+    this.renderHardware();
+    this.renderFinances();
+  }
+
+  saveGame(slot = 'manual') {
+    if (!this.state) return;
+    try {
+      localStorage.setItem(`program_in_save_${slot}`, JSON.stringify(this.state));
+      if (slot === 'manual') this.toast('Игра сохранена в память браузера!', 'green');
+      this.checkAutoSaveAvailability();
+    } catch (e) {
+      this.toast('Ошибка сохранения: превышен лимит localStorage.', 'red');
+    }
+  }
+
+  loadGame(slot = 'auto') {
+    const raw = localStorage.getItem(`program_in_save_${slot}`);
+    if (!raw) {
+      this.toast('Сохранение не найдено!', 'red');
+      return;
+    }
+    try {
+      this.state = JSON.parse(raw);
+      this.showScreen('screen-game');
+      this.renderAll();
+      this.startLoop();
+      this.toast('Сохранение загружено!', 'green');
+    } catch (e) {
+      this.toast('Поврежденный файл сохранения!', 'red');
+    }
+  }
+
+  exportSave() {
+    const raw = localStorage.getItem('program_in_save_auto') || localStorage.getItem('program_in_save_manual');
+    if (!raw) {
+      alert('Нет сохранённой игры для экспорта!');
+      return;
+    }
+    const blob = new Blob([raw], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `program_in_save_${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  importSave(evt) {
+    const file = evt.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        if (parsed.version && parsed.character) {
+          this.state = parsed;
+          this.saveGame('auto');
+          this.showScreen('screen-game');
+          this.renderAll();
+          this.startLoop();
+          this.toast('Сохранение успешно импортировано!', 'green');
+        } else {
+          alert('Некорректная структура файла сохранения!');
+        }
+      } catch (err) {
+        alert('Не удалось прочитать JSON-файл сохранения.');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  toast(text, color = 'cyan') {
+    const shelf = document.getElementById('toast-shelf');
+    const item = document.createElement('div');
+    item.className = `toast-item ${color === 'red' ? 'red' : color === 'green' ? 'green' : ''}`;
+    item.textContent = text;
+    shelf.appendChild(item);
+    setTimeout(() => {
+      item.style.opacity = '0';
+      setTimeout(() => item.remove(), 300);
+    }, 2800);
+  }
+
+  showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  openTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    const currentBtn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+    if (currentBtn) currentBtn.classList.add('active');
+
+    // На мобильных закрываем боковое меню
+    document.getElementById('app-sidebar').classList.remove('open');
+  }
+
+  toggleSidebar() {
+    document.getElementById('app-sidebar').classList.toggle('open');
+  }
+
+  openCharacterCreator() {
+    this.showScreen('screen-creation');
+  }
+
+  confirmCharacter() {
+    const name = document.getElementById('cr-name').value.trim() || 'Разработчик';
+    const age = parseInt(document.getElementById('cr-age').value) || 20;
+    const location = document.getElementById('cr-location').value;
+    const spec = document.getElementById('cr-spec').value;
+    const scenario = document.getElementById('cr-scenario').value;
+    const trait = document.getElementById('cr-trait').value;
+
+    this.createNewGame({ name, age, location, spec, scenario, trait });
+  }
+
+  quitToMenu() {
+    if (confirm('Вернуться в меню? Убедитесь, что вы сохранили игру.')) {
+      this.setSpeed(0);
+      this.showScreen('screen-menu');
+      this.checkAutoSaveAvailability();
+    }
+  }
+
+  openProductWizard() {
+    this.initProductWizard();
+    this.wizGoStep(1);
+    document.getElementById('modal-product-wizard').classList.add('active');
+  }
+
+  closeProductWizard() {
+    document.getElementById('modal-product-wizard').classList.remove('active');
+  }
+
+  wizGoStep(step) {
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`wiz-step-${step}`).classList.add('active');
+    this.calcWizEstimates();
+  }
+}
+
+// Запуск игрового движка
+const GameApp = new GameEngine();
+window.addEventListener('DOMContentLoaded', () => GameApp.init());
+</script>
+</body>
+</html>
