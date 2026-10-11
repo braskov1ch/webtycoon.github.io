@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WEB TYCOON v5.2: PIRATE SYNDICATE</title>
+<style>
+:root,[data-theme="amber"]{--bg:#07070a;--panel:#0f0f14;--panel-light:#16161e;--border:#2a2a35;--text:#e4e4e7;--text-muted:#71717a;--brand:#f59e0b;--brand-hover:#fbbf24;--accent:#3b82f6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#a855f7;--cyan:#22d3ee}
+[data-theme="matrix"]{--bg:#020a02;--panel:#0a140a;--panel-light:#0f1f0f;--border:#1a3a1a;--text:#c8f0c8;--text-muted:#4a7a4a;--brand:#22c55e;--brand-hover:#4ade80;--accent:#86efac;--success:#22c55e;--warning:#eab308;--danger:#ef4444;--purple:#a3e635;--cyan:#4ade80}
+[data-theme="neon"]{--bg:#0a0612;--panel:#120a1c;--panel-light:#1a1028;--border:#3a2060;--text:#f0e6ff;--text-muted:#8a70b0;--brand:#e879f9;--brand-hover:#f0abfc;--accent:#22d3ee;--success:#34d399;--warning:#fbbf24;--danger:#f43f5e;--purple:#c084fc;--cyan:#22d3ee}
+[data-theme="blood"]{--bg:#0c0404;--panel:#140808;--panel-light:#1c0c0c;--border:#3a1515;--text:#f0e0e0;--text-muted:#8a6060;--brand:#ef4444;--brand-hover:#f87171;--accent:#f97316;--success:#22c55e;--warning:#f59e0b;--danger:#dc2626;--purple:#f43f5e;--cyan:#fb923c}
+[data-theme="ocean"]{--bg:#02060c;--panel:#060e18;--panel-light:#0c1624;--border:#1a3048;--text:#e0eef8;--text-muted:#5a7a98;--brand:#38bdf8;--brand-hover:#7dd3fc;--accent:#818cf8;--success:#2dd4bf;--warning:#fbbf24;--danger:#f87171;--purple:#a78bfa;--cyan:#22d3ee}
+[data-theme="mono"]{--bg:#0a0a0a;--panel:#121212;--panel-light:#1a1a1a;--border:#2e2e2e;--text:#e8e8e8;--text-muted:#777;--brand:#a0a0a0;--brand-hover:#c0c0c0;--accent:#888;--success:#8a8;--warning:#aa8;--danger:#a66;--purple:#999;--cyan:#aaa}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'JetBrains Mono','Consolas',monospace;letter-spacing:-.3px}
+body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;overflow:hidden;font-size:13px;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+header{background:linear-gradient(180deg,var(--panel),var(--bg));border-bottom:1px solid var(--border);padding:9px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10;flex-wrap:wrap;gap:8px}
+.logo{font-size:1.1rem;font-weight:900;color:var(--brand);text-transform:uppercase;letter-spacing:1px}
+.logo span{font-size:.5rem;color:var(--text-muted);letter-spacing:0}
+.stats-bar{display:flex;gap:12px;flex:1;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;align-items:flex-end}
+.stat-val{font-size:.95rem;font-weight:bold;color:#fff}
+.stat-label{font-size:.55rem;color:var(--text-muted);text-transform:uppercase}
+.header-actions{display:flex;gap:4px;margin-left:6px}
+.icon-btn{background:var(--panel-light);border:1px solid var(--border);color:var(--text-muted);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:.15s}
+.icon-btn:hover{color:#fff;border-color:var(--text-muted)}.icon-btn.active{color:var(--brand);border-color:var(--brand)}
+.layout{display:flex;flex:1;overflow:hidden}
+aside{width:190px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;z-index:20;overflow-y:auto}
+.nav-btn{background:transparent;border:none;color:var(--text-muted);padding:10px 12px;text-align:left;font-size:.72rem;cursor:pointer;transition:.15s;border-left:3px solid transparent;display:flex;align-items:center;gap:6px;text-transform:uppercase}
+.nav-btn:hover{color:#fff;background:var(--panel-light)}
+.nav-btn.active{color:var(--brand);border-left-color:var(--brand);background:color-mix(in srgb,var(--brand) 8%,transparent);font-weight:bold}
+.nav-spacer{flex:1}.nav-footer{padding:8px;border-top:1px solid var(--border);font-size:.6rem;color:var(--text-muted);text-align:center}
+main{flex:1;padding:14px;overflow-y:auto}
+.tab-content{display:none;padding-bottom:30px;animation:fadeIn .15s ease}.tab-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+h1{font-size:1.15rem;margin-bottom:4px;color:#fff;text-transform:uppercase}
+h2{font-size:.9rem;margin:14px 0 8px;color:#fff;border-bottom:1px solid var(--border);padding-bottom:4px;text-transform:uppercase}
+p.desc{color:var(--text-muted);margin-bottom:10px;font-size:.74rem;line-height:1.35}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:5px;transition:border-color .15s}
+.card:hover{border-color:color-mix(in srgb,var(--brand) 40%,var(--border))}
+.card.pinned{border-color:var(--brand);box-shadow:0 0 8px color-mix(in srgb,var(--brand) 20%,transparent)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border);padding-bottom:5px;margin-bottom:2px}
+.card-header h3,.card-header h4{margin:0;color:#fff;font-size:.85rem}
+label{font-size:.65rem;color:var(--text-muted);display:block;margin-bottom:2px;text-transform:uppercase}
+input,select{background:var(--bg);border:1px solid var(--border);color:#fff;padding:6px 8px;border-radius:6px;width:100%;outline:none;font-size:.78rem;margin-bottom:6px}
+input:focus,select:focus{border-color:var(--brand)}
+input[type=range]{-webkit-appearance:none;background:transparent;padding:0;margin-bottom:8px;height:16px}
+input[type=range]::-webkit-slider-runnable-track{width:100%;height:3px;background:var(--border);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:12px;width:12px;border-radius:50%;background:var(--brand);margin-top:-4.5px;cursor:pointer}
+input[type=checkbox]{width:auto;margin-right:5px;accent-color:var(--brand)}
+input[type=file]{font-size:.7rem;padding:4px}
+.btn{background:var(--panel-light);color:#fff;border:1px solid var(--border);padding:6px 10px;border-radius:6px;font-weight:bold;cursor:pointer;transition:.15s;width:100%;text-align:center;text-transform:uppercase;font-size:.7rem}
+.btn:hover:not(:disabled){background:color-mix(in srgb,var(--panel-light) 70%,var(--border));border-color:var(--text-muted)}
+.btn.primary{background:var(--brand);color:#000;border-color:var(--brand)}.btn.primary:hover:not(:disabled){background:var(--brand-hover)}
+.btn.action{background:transparent;border-color:var(--accent);color:var(--accent)}.btn.action:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.btn.danger{background:transparent;border-color:var(--danger);color:var(--danger)}.btn.danger:hover:not(:disabled){background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.btn.purple{background:transparent;border-color:var(--purple);color:var(--purple)}.btn.purple:hover:not(:disabled){background:color-mix(in srgb,var(--purple) 12%,transparent)}
+.btn.success{background:transparent;border-color:var(--success);color:var(--success)}.btn.success:hover:not(:disabled){background:color-mix(in srgb,var(--success) 12%,transparent)}
+.btn:disabled{opacity:.4;cursor:not-allowed}.btn-sm{padding:3px 8px;font-size:.65rem;width:auto}
+.meter-container{display:flex;flex-direction:column;gap:1px;margin-bottom:2px}
+.meter-label{display:flex;justify-content:space-between;font-size:.62rem;color:var(--text-muted);font-weight:bold}
+.meter-bg{width:100%;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;border:1px solid var(--border)}
+.meter-fill{height:100%;transition:width .3s;width:0%;border-radius:2px}
+.badge{padding:2px 5px;border-radius:3px;font-size:.58rem;font-weight:bold;border:1px solid transparent;text-transform:uppercase}
+.badge.online{color:var(--success);border-color:var(--success);background:color-mix(in srgb,var(--success) 12%,transparent)}
+.badge.offline{color:var(--warning);border-color:var(--warning);background:color-mix(in srgb,var(--warning) 12%,transparent)}
+.badge.banned{color:var(--danger);border-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.badge.locked{color:var(--text-muted);border-color:var(--border)}
+.badge.title{color:var(--purple);border-color:var(--purple);background:color-mix(in srgb,var(--purple) 12%,transparent)}
+#modal-overlay,#settings-overlay,#ach-overlay,#slots-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);padding:10px}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:10px;width:100%;max-width:720px;display:flex;flex-direction:column;max-height:92vh;box-shadow:0 20px 50px rgba(0,0,0,.7)}
+.modal-header{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--panel-light);border-radius:10px 10px 0 0}
+.modal-body{padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.modal-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:5px;gap:2px;flex-wrap:wrap}
+.m-tab{background:none;border:none;color:var(--text-muted);padding:4px 9px;cursor:pointer;text-transform:uppercase;font-size:.65rem;border-bottom:2px solid transparent}
+.m-tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+.m-tab-content{display:none}.m-tab-content.active{display:block}
+#toast-container{position:fixed;bottom:16px;right:16px;display:flex;flex-direction:column;gap:5px;z-index:200;pointer-events:none;max-width:320px}
+.toast{background:var(--panel-light);border:1px solid var(--border);border-left:3px solid var(--brand);color:#fff;padding:9px 11px;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.5);font-size:.74rem;animation:toastIn .2s ease}
+.toast.error{border-left-color:var(--danger)}.toast.warning{border-left-color:var(--warning)}.toast.info{border-left-color:var(--accent)}.toast.ach{border-left-color:var(--purple)}
+@keyframes toastIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+.event-banner{background:linear-gradient(90deg,color-mix(in srgb,var(--purple) 15%,transparent),color-mix(in srgb,var(--accent) 10%,transparent));border:1px solid var(--purple);border-radius:8px;padding:9px 11px;margin-bottom:10px;display:none}
+.event-banner.show{display:block}
+.log-entry{font-size:.68rem;color:var(--text-muted);padding:2px 0;border-bottom:1px solid color-mix(in srgb,var(--border) 50%,transparent)}
+.log-entry span{color:var(--text)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}}
+.theme-swatch{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:.15s}
+.theme-swatch:hover,.theme-swatch.active{border-color:var(--brand);transform:scale(1.1)}
+.ach-card{opacity:.45;filter:grayscale(.6)}.ach-card.unlocked{opacity:1;filter:none;border-color:var(--purple)}
+.check-row{display:flex;align-items:center;gap:5px;margin-bottom:6px;font-size:.76rem;color:var(--text)}
+.plugin-row{display:flex;justify-content:space-between;align-items:center;padding:7px;background:var(--bg);border:1px solid var(--border);border-radius:6px;margin-bottom:5px}
+.plugin-row .info{flex:1}.plugin-row .info .name{font-weight:bold;color:#fff;font-size:.76rem}.plugin-row .info .desc{font-size:.64rem;color:var(--text-muted);text-transform:none}
+.sandbox-banner{background:color-mix(in srgb,var(--cyan) 15%,transparent);border:1px solid var(--cyan);border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:.72rem;color:var(--cyan);text-align:center}
+@media(max-width:768px){
+header{padding:6px 8px}.stats-bar{justify-content:space-between;gap:5px;width:100%}.header-actions{margin-left:0}
+.layout{flex-direction:column}
+aside{position:fixed;bottom:0;left:0;width:100%;height:54px;flex-direction:row;border-right:none;border-top:1px solid var(--border);padding:0;z-index:50;overflow-x:auto}
+.nav-btn{flex:1;flex-direction:column;justify-content:center;gap:1px;padding:2px;border-left:none;border-top:2px solid transparent;font-size:.5rem;min-width:48px}
+.nav-btn.active{border-left:none;border-top-color:var(--brand)}
+.nav-spacer,.nav-footer{display:none}
+main{padding:8px;padding-bottom:62px}.grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-theme="amber">
+
+<header>
+  <div class="logo">WEB TYCOON <span>v5.2 PIRATE SYNDICATE</span></div>
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-val" id="ui-day">1</span><span class="stat-label">День</span></div>
+    <div class="stat"><span class="stat-val" id="ui-traffic">0</span><span class="stat-label">Хосты/д</span></div>
+    <div class="stat"><span class="stat-val" id="ui-income" style="color:var(--success)">$0</span><span class="stat-label">Профит/д</span></div>
+    <div class="stat"><span class="stat-val" id="ui-money">$5,000</span><span class="stat-label">Баланс</span></div>
+    <div class="stat"><span class="stat-val" id="ui-rep" style="color:var(--purple)">0</span><span class="stat-label">Репутация</span></div>
+    <div class="stat"><span class="stat-val" id="ui-title" style="color:var(--cyan);font-size:.75rem">—</span><span class="stat-label">Титул</span></div>
+    <div class="header-actions">
+      <button class="icon-btn" id="btn-pause" title="Пауза" onclick="togglePause()">⏸</button>
+      <button class="icon-btn" title="Достижения" onclick="openAchievements()">🏆</button>
+      <button class="icon-btn" title="Слоты" onclick="openSlots()">💾</button>
+      <button class="icon-btn" title="Настройки" onclick="openSettings()">⚙️</button>
+    </div>
+  </div>
+</header>
+<div id="sandbox-bar" class="sandbox-banner" style="display:none">🧪 РЕЖИМ ПЕСОЧНИЦЫ — прогресс не влияет на основной сейв</div>
+<div class="layout">
+  <aside>
+    <button class="nav-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Консоль</button>
+    <button class="nav-btn" data-tab="domains" onclick="switchTab('domains')">🌐 Домены</button>
+    <button class="nav-btn" data-tab="servers" onclick="switchTab('servers')">🖥️ Дата-Центр</button>
+    <button class="nav-btn" data-tab="launch" onclick="switchTab('launch')">🚀 Deploy</button>
+    <button class="nav-btn" data-tab="networks" onclick="switchTab('networks')">🔗 Сети</button>
+    <button class="nav-btn" data-tab="staff" onclick="switchTab('staff')">👥 Команда</button>
+    <button class="nav-btn" data-tab="research" onclick="switchTab('research')">🔬 Исслед.</button>
+    <button class="nav-btn" data-tab="market" onclick="switchTab('market')">💱 Биржа</button>
+    <button class="nav-btn" data-tab="forum" onclick="switchTab('forum')">🌑 Форум</button>
+    <button class="nav-btn" data-tab="log" onclick="switchTab('log')">📜 Лог</button>
+    <div class="nav-spacer"></div>
+    <div class="nav-footer" id="syndicate-name">Синдикат: Безымянный</div>
+  </aside>
+  <main>
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="event-banner" id="event-banner">
+        <div style="font-weight:bold;color:var(--purple);margin-bottom:2px" id="event-title">Событие</div>
+        <div style="font-size:.72rem;color:var(--text-muted)" id="event-desc"></div>
+      </div>
+      <h1>Управление проектами</h1>
+      <p class="desc">Закрепляйте сайты 📌, собирайте сети, honeypot, SaaS, мобильные приложения. Продавайте на бирже.</p>
+      <div id="sites-grid" class="grid"></div>
+      <div id="empty-sites" style="display:none;text-align:center;padding:30px;color:var(--text-muted)"><div style="font-size:1.6rem;margin-bottom:6px">🌐</div>Нет проектов</div>
+    </div>
+    <div id="tab-domains" class="tab-content">
+      <h1>DNS Регистратор</h1>
+      <div class="card" style="max-width:640px">
+        <label>Регистрация домена</label>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <input type="text" id="domainSearchInput" placeholder="name" style="margin:0;flex:1" maxlength="40">
+          <select id="domainCategorySelect" style="margin:0;width:140px" onchange="renderDomainZones()">
+            <option value="all">Все</option><option value="classic">Классика</option><option value="regional">Регион</option>
+            <option value="premium">Премиум</option><option value="cheap">Мусор</option><option value="dark">Dark</option><option value="new">Новые</option>
+          </select>
+        </div>
+        <div id="domainZonesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:4px;max-height:200px;overflow-y:auto"></div>
+      </div>
+      <h2>Портфель <span id="domains-count" style="color:var(--text-muted);font-size:.75rem"></span></h2>
+      <div id="my-domains-list" class="grid"></div>
+    </div>
+    <div id="tab-servers" class="tab-content">
+      <h1>Дата-Центр</h1>
+      <p class="desc">Апгрейды CPU/RAM/NET. Anycast — на уровне сервера.</p>
+      <div class="grid" id="shop-servers-grid" style="margin-bottom:12px"></div>
+      <h2>Инфраструктура</h2>
+      <div id="my-servers-grid" class="grid"></div>
+    </div>
+    <div id="tab-launch" class="tab-content">
+      <h1>Деплой</h1>
+      <div class="grid">
+        <div class="card">
+          <h2 style="margin:0;border:none;color:var(--brand);font-size:.85rem">1. База</h2>
+          <label>Домен</label><select id="launch-domain"></select>
+          <label>Сервер</label><select id="launch-server"></select>
+          <label>Ниша</label><select id="launch-niche"></select>
+          <label>Тип проекта</label>
+          <select id="launch-type">
+            <option value="site">Обычный сайт</option>
+            <option value="honeypot">Honeypot (приманка)</option>
+            <option value="saas">SaaS-обёртка</option>
+            <option value="mobile">Мобильное приложение</option>
+          </select>
+        </div>
+        <div class="card">
+          <h2 style="margin:0;border:none;color:var(--brand);font-size:.85rem">2. Stack</h2>
+          <label>Backend</label><select id="launch-backend"></select>
+          <label>БД</label><select id="launch-db"></select>
+          <label>Дизайн</label><select id="launch-design"></select>
+        </div>
+      </div>
+      <div class="card" style="margin-top:8px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="color:var(--text-muted);font-size:.7rem">СМЕТА</span>
+          <span id="launch-cost-preview" style="font-size:1.05rem;color:var(--warning);font-weight:bold">$0</span>
+        </div>
+        <button class="btn primary" style="padding:10px" onclick="launchSite()">Деплой 🚀</button>
+      </div>
+    </div>
+    <div id="tab-networks" class="tab-content">
+      <h1>Сети сайтов</h1>
+      <p class="desc">Объединяйте сайты: общий SEO-буст, общий риск заражения баном. Поддомены привязаны к родителю.</p>
+      <div class="card" style="max-width:500px;margin-bottom:12px">
+        <label>Название сети</label>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="net-name" placeholder="Gray Media Group" style="margin:0;flex:1" maxlength="30">
+          <button class="btn primary btn-sm" onclick="createNetwork()">Создать</button>
+        </div>
+      </div>
+      <div id="networks-list" class="grid"></div>
+    </div>
+    <div id="tab-staff" class="tab-content">
+      <h1>Команда</h1>
+      <div class="grid" id="staff-shop-grid"></div>
+      <h2>В штате</h2>
+      <div id="my-staff-grid" class="grid"></div>
+    </div>
+    <div id="tab-research" class="tab-content">
+      <h1>Исследования</h1>
+      <div class="grid" id="research-grid"></div>
+    </div>
+    <div id="tab-market" class="tab-content">
+      <h1>Биржа</h1>
+      <div class="two-col" style="margin-bottom:10px">
+        <div class="card">
+          <label>Продать домен</label>
+          <div style="display:flex;gap:6px"><select id="sell-domain-select" style="margin:0;flex:1"></select><button class="btn primary btn-sm" onclick="sellDomain()">Продать</button></div>
+          <p id="sell-preview" style="font-size:.68rem;color:var(--text-muted);margin-top:4px"></p>
+        </div>
+        <div class="card">
+          <label>Продать сайт</label>
+          <div style="display:flex;gap:6px"><select id="sell-site-select" style="margin:0;flex:1"></select><button class="btn success btn-sm" onclick="sellSite()">Продать</button></div>
+          <p id="sell-site-preview" style="font-size:.68rem;color:var(--text-muted);margin-top:4px"></p>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <label>M&A — купить готовый сайт с рынка</label>
+        <p style="font-size:.7rem;color:var(--text-muted);text-transform:none;margin-bottom:6px">Рандомный готовый актив. Цена и качество случайны.</p>
+        <button class="btn purple" onclick="buyMA()">Купить M&A-актив (−$800–$5000)</button>
+      </div>
+      <h2>Аукцион доменов</h2>
+      <div id="auction-list" class="grid"></div>
+      <h2>Спрос на зоны</h2>
+      <div id="market-offers" class="grid"></div>
+    </div>
+    <div id="tab-forum" class="tab-content">
+      <h1>Тёмный форум</h1>
+      <p class="desc">Еженедельные лоты. Обновление каждые 7 дней. Риск скама 15%.</p>
+      <div id="forum-list" class="grid"></div>
+    </div>
+    <div id="tab-log" class="tab-content">
+      <h1>Журнал</h1>
+      <div class="card" id="game-log" style="max-height:60vh;overflow-y:auto"></div>
+    </div>
+  </main>
+</div>
+
+<div id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="m-domain" style="margin:0;border:none;color:var(--brand);font-size:1rem">domain.com</h2>
+        <span id="m-status" style="font-size:.65rem;color:var(--text-muted)">Status</span>
+      </div>
+      <button class="btn btn-sm" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-tabs" style="padding:0 12px;background:var(--panel-light)">
+      <button class="m-tab active" data-mtab="m-tab-main" onclick="switchModalTab('m-tab-main')">Монет.</button>
+      <button class="m-tab" data-mtab="m-tab-traffic" onclick="switchModalTab('m-tab-traffic')">Трафик</button>
+      <button class="m-tab" data-mtab="m-tab-plugins" onclick="switchModalTab('m-tab-plugins')">Плагины</button>
+      <button class="m-tab" data-mtab="m-tab-custom" onclick="switchModalTab('m-tab-custom')">Кастом</button>
+      <button class="m-tab" data-mtab="m-tab-infra" onclick="switchModalTab('m-tab-infra')">Защита</button>
+      <button class="m-tab" data-mtab="m-tab-net" onclick="switchModalTab('m-tab-net')">Сеть</button>
+      <button class="m-tab" data-mtab="m-tab-migrate" onclick="switchModalTab('m-tab-migrate')">Миграция</button>
+    </div>
+    <div class="modal-body">
+      <div id="m-tab-main" class="m-tab-content active">
+        <div class="two-col" style="margin-bottom:6px">
+          <div class="card" style="background:var(--bg);padding:7px"><label>Органика</label><div id="m-org-traf" style="font-size:1.05rem;font-weight:bold;color:#fff">0</div></div>
+          <div class="card" style="background:var(--bg);padding:7px"><label>Прямые</label><div id="m-dir-traf" style="font-size:1.05rem;font-weight:bold;color:var(--accent)">0</div></div>
+        </div>
+        <div class="meter-container" style="margin-bottom:8px">
+          <div class="meter-label"><span>УГРОЗА</span><span id="m-threat-val">0%</span></div>
+          <div class="meter-bg"><div class="meter-fill" id="m-threat-bar" style="width:0%"></div></div>
+        </div>
+        <div class="meter-container" style="margin-bottom:8px">
+          <div class="meter-label"><span>КОНТЕНТ</span><span id="m-content-val">0</span></div>
+          <div class="meter-bg"><div class="meter-fill" id="m-content-bar" style="width:0%;background:var(--cyan)"></div></div>
+        </div>
+        <label>Монетизация</label><select id="mod-monetize" onchange="applySiteSettings('monetize')"></select>
+        <label style="display:flex;justify-content:space-between"><span>Ads: <span id="mod-ads-val" style="color:#fff">1</span></span></label>
+        <input type="range" id="mod-ads-level" min="0" max="5" step="1" value="1" oninput="document.getElementById('mod-ads-val').innerText=this.value" onchange="applySiteSettings('ads')">
+      </div>
+      <div id="m-tab-traffic" class="m-tab-content">
+        <label>SEO</label>
+        <div class="two-col" style="margin-bottom:8px">
+          <button class="btn action" onclick="buyAction('seo_cheap')">Прогон −$80</button>
+          <button class="btn action" onclick="buyAction('seo_pbn')">PBN −$400</button>
+          <button class="btn action" onclick="buyAction('seo_guest')">Гостевые −$250</button>
+          <button class="btn purple" onclick="buyAction('seo_viral')">Вирус −$700</button>
+        </div>
+        <label>Реклама</label>
+        <div class="two-col">
+          <button class="btn" onclick="buyAction('ads_banner')">Баннеры −$120</button>
+          <button class="btn primary" onclick="buyAction('ads_target')">Таргет −$550</button>
+          <button class="btn" onclick="buyAction('ads_native')">Натив −$300</button>
+          <button class="btn success" onclick="buyAction('ads_influencer')">Инфлюенс −$1200</button>
+        </div>
+        <label style="margin-top:8px">Контент</label>
+        <div class="two-col">
+          <button class="btn action" onclick="buyAction('content_small')">Статья −$40</button>
+          <button class="btn action" onclick="buyAction('content_big')">Пакет −$200</button>
+        </div>
+      </div>
+      <div id="m-tab-plugins" class="m-tab-content"><div id="plugins-list"></div></div>
+      <div id="m-tab-custom" class="m-tab-content">
+        <label>Backend (<span id="m-be-name">—</span>)</label><select id="mod-upgrade-be"></select>
+        <button class="btn action btn-sm" onclick="upgradeStack('be')" style="margin-bottom:8px">Апгрейд BE</button>
+        <label>БД (<span id="m-db-name">—</span>)</label><select id="mod-upgrade-db"></select>
+        <button class="btn action btn-sm" onclick="upgradeStack('db')" style="margin-bottom:8px">Апгрейд БД</button>
+        <label>Дизайн (<span id="m-ds-name">—</span>)</label><select id="mod-upgrade-ds"></select>
+        <button class="btn action btn-sm" onclick="upgradeStack('ds')" style="margin-bottom:8px">Апгрейд UI</button>
+        <label>Сменить нишу (−$150, −20% SEO)</label><select id="mod-change-niche"></select>
+        <button class="btn purple btn-sm" onclick="changeNiche()" style="margin-bottom:8px">Сменить</button>
+        <label>Локаль / перевод (−$200 за язык)</label>
+        <select id="mod-locale"><option value="en">English</option><option value="ru">Русский</option><option value="de">Deutsch</option><option value="es">Español</option><option value="zh">中文</option><option value="ja">日本語</option></select>
+        <button class="btn action btn-sm" onclick="addLocale()" style="margin-bottom:8px">Добавить локаль</button>
+        <div id="m-locales" style="font-size:.7rem;color:var(--text-muted);margin-bottom:8px"></div>
+        <label>Легенда / обвес (−$180)</label>
+        <p style="font-size:.65rem;color:var(--text-muted);text-transform:none;margin-bottom:4px">Фейковые about/legal → −12% угроза</p>
+        <button class="btn action btn-sm" id="btn-legend" onclick="buyAction('legend')">Купить легенду</button>
+      </div>
+      <div id="m-tab-infra" class="m-tab-content">
+        <div style="background:var(--bg);border:1px solid var(--danger);padding:8px;border-radius:6px;margin-bottom:8px">
+          <label style="color:var(--danger)">Откуп (−$350)</label>
+          <button class="btn danger" onclick="buyAction('clear_threat')" style="padding:7px;margin-top:4px">Сброс угрозы</button>
+        </div>
+        <label>WAF</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:var(--bg);padding:7px;border-radius:6px;border:1px solid var(--border)">
+          <span id="m-cdn-status">Нет</span>
+          <button class="btn action btn-sm" id="btn-buy-cdn" onclick="buyAction('cdn')">Купить</button>
+        </div>
+        <label>Custom NS/DNS (−$300)</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:var(--bg);padding:7px;border-radius:6px;border:1px solid var(--border)">
+          <span id="m-ns-status">Стандарт</span>
+          <button class="btn action btn-sm" id="btn-buy-ns" onclick="buyAction('ns')">Купить NS</button>
+        </div>
+        <label>Свой email (−$250)</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;background:var(--bg);padding:7px;border-radius:6px;border:1px solid var(--border)">
+          <span id="m-email-status">Нет</span>
+          <button class="btn action btn-sm" id="btn-buy-email" onclick="buyAction('email')">Подключить</button>
+        </div>
+        <label>Зеркало</label>
+        <div style="display:flex;gap:6px;margin-bottom:4px">
+          <select id="mod-mirror" style="margin:0"></select>
+          <button class="btn primary btn-sm" onclick="applySiteSettings('mirror')">Привязать</button>
+        </div>
+        <button class="btn action btn-sm" onclick="autoGenMirror()" style="margin-bottom:6px">Авто-зеркало из имени</button>
+        <label>Ложное зеркало (−$100)</label>
+        <button class="btn purple btn-sm" onclick="buyAction('false_mirror')" style="margin-bottom:8px">Создать ложное</button>
+        <div id="m-false-mirrors" style="font-size:.68rem;color:var(--text-muted);margin-bottom:8px"></div>
+        <button class="btn danger" onclick="buyAction('delete')">🗑 Удалить</button>
+      </div>
+      <div id="m-tab-net" class="m-tab-content">
+        <label>Сеть</label>
+        <select id="mod-network"></select>
+        <button class="btn action btn-sm" onclick="assignNetwork()" style="margin-bottom:8px">Привязать к сети</button>
+        <label>Поддомен (−$30)</label>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="mod-subdomain" placeholder="blog" style="margin:0;flex:1" maxlength="20">
+          <button class="btn primary btn-sm" onclick="addSubdomain()">Создать</button>
+        </div>
+        <div id="m-subdomains" style="font-size:.7rem;color:var(--text-muted);margin-top:6px"></div>
+        <label style="margin-top:10px">Своя рекламная сеть</label>
+        <p style="font-size:.65rem;color:var(--text-muted);text-transform:none">Крутить чужие объявления. Нужен whitelist или день 40+.</p>
+        <button class="btn purple btn-sm" id="btn-adnet" onclick="buyAction('adnet')">Запустить AdNet (−$2000)</button>
+      </div>
+      <div id="m-tab-migrate" class="m-tab-content">
+        <label>Сервер</label><select id="mod-migrate-server"></select>
+        <button class="btn action" onclick="migrateSite()" style="margin-top:4px">Мигрировать</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="settings-overlay">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header"><h2 style="margin:0;border:none;color:var(--brand)">Настройки</h2><button class="btn btn-sm" onclick="closeSettings()">✕</button></div>
+    <div class="modal-body">
+      <label>Синдикат</label><input type="text" id="set-name" maxlength="24">
+      <label>Скорость</label>
+      <select id="set-speed"><option value="2000">2с</option><option value="1000">1с</option><option value="500">0.5с</option><option value="250">0.25с</option></select>
+      <label>Сложность</label>
+      <select id="set-diff"><option value="easy">Лёгкая</option><option value="normal" selected>Норма</option><option value="hard">Сложная</option><option value="nightmare">Кошмар</option></select>
+      <label>Тема</label>
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap" id="theme-picker">
+        <div class="theme-swatch active" data-theme="amber" style="background:linear-gradient(135deg,#f59e0b,#0f0f14)" onclick="setTheme('amber')"></div>
+        <div class="theme-swatch" data-theme="matrix" style="background:linear-gradient(135deg,#22c55e,#020a02)" onclick="setTheme('matrix')"></div>
+        <div class="theme-swatch" data-theme="neon" style="background:linear-gradient(135deg,#e879f9,#0a0612)" onclick="setTheme('neon')"></div>
+        <div class="theme-swatch" data-theme="blood" style="background:linear-gradient(135deg,#ef4444,#0c0404)" onclick="setTheme('blood')"></div>
+        <div class="theme-swatch" data-theme="ocean" style="background:linear-gradient(135deg,#38bdf8,#02060c)" onclick="setTheme('ocean')"></div>
+        <div class="theme-swatch" data-theme="mono" style="background:linear-gradient(135deg,#a0a0a0,#0a0a0a)" onclick="setTheme('mono')"></div>
+      </div>
+      <div class="check-row"><input type="checkbox" id="set-toasts" checked> Тосты</div>
+      <div class="check-row"><input type="checkbox" id="set-autosave" checked> Автосейв</div>
+      <div class="check-row"><input type="checkbox" id="set-events" checked> События</div>
+      <label style="margin-top:8px">Экспорт / Импорт</label>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <button class="btn action btn-sm" onclick="exportSave()">Экспорт JSON</button>
+        <label class="btn btn-sm" style="margin:0;cursor:pointer">Импорт<input type="file" id="import-file" accept=".json" style="display:none" onchange="importSave(event)"></label>
+      </div>
+      <div style="display:flex;gap:6px"><button class="btn primary" onclick="applySettings()">OK</button><button class="btn danger" onclick="resetGame()">Сброс</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="slots-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header"><h2 style="margin:0;border:none;color:var(--brand)">Слоты сохранения</h2><button class="btn btn-sm" onclick="closeSlots()">✕</button></div>
+    <div class="modal-body">
+      <div id="slots-list"></div>
+      <button class="btn purple" style="margin-top:8px" onclick="startSandbox()">🧪 Песочница (новый)</button>
+      <p style="font-size:.65rem;color:var(--text-muted);margin-top:6px;text-transform:none">Песочница: $50k старт, без записи в основной прогресс.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ach-overlay">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header"><h2 style="margin:0;border:none;color:var(--purple)">🏆 Достижения и титулы</h2><button class="btn btn-sm" onclick="closeAchievements()">✕</button></div>
+    <div class="modal-body">
+      <h2 style="margin-top:0">Титул: <span id="ach-title-cur" style="color:var(--cyan)">—</span></h2>
+      <div id="titles-list" style="margin-bottom:12px"></div>
+      <h2>Достижения</h2>
+      <div id="ach-grid" class="grid" style="grid-template-columns:1fr 1fr"></div>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+<script>
+
+const DB={
+domainZones:{
+'.com':{p:14,seo:1.22,abuse:1.5,cat:'classic'},'.net':{p:11,seo:1.15,abuse:1.45,cat:'classic'},'.org':{p:13,seo:1.18,abuse:1.3,cat:'classic'},
+'.info':{p:6,seo:0.95,abuse:1.2,cat:'classic'},'.biz':{p:8,seo:0.92,abuse:1.25,cat:'classic'},'.edu':{p:50,seo:1.3,abuse:1.1,cat:'classic'},
+'.ru':{p:4,seo:1.04,abuse:2.6,cat:'regional'},'.us':{p:7,seo:1.06,abuse:2.1,cat:'regional'},'.de':{p:9,seo:1.08,abuse:1.9,cat:'regional'},
+'.uk':{p:10,seo:1.1,abuse:1.85,cat:'regional'},'.fr':{p:9,seo:1.05,abuse:1.8,cat:'regional'},'.cn':{p:12,seo:1.02,abuse:2.4,cat:'regional'},
+'.br':{p:8,seo:1,abuse:1.7,cat:'regional'},'.su':{p:5,seo:0.95,abuse:1.8,cat:'regional'},'.by':{p:3,seo:0.9,abuse:2.2,cat:'regional'},
+'.kz':{p:4,seo:0.92,abuse:2,cat:'regional'},'.ua':{p:3,seo:0.95,abuse:2.3,cat:'regional'},'.pl':{p:7,seo:1.02,abuse:1.75,cat:'regional'},
+'.nl':{p:10,seo:1.06,abuse:1.7,cat:'regional'},'.es':{p:8,seo:1.03,abuse:1.8,cat:'regional'},'.it':{p:9,seo:1.04,abuse:1.75,cat:'regional'},
+'.jp':{p:15,seo:1.1,abuse:1.6,cat:'regional'},'.in':{p:6,seo:1,abuse:1.9,cat:'regional'},'.mx':{p:8,seo:0.98,abuse:1.85,cat:'regional'},
+'.kr':{p:14,seo:1.08,abuse:1.55,cat:'regional'},'.tr':{p:5,seo:0.96,abuse:1.9,cat:'regional'},'.se':{p:11,seo:1.07,abuse:1.65,cat:'regional'},
+'.io':{p:42,seo:1.16,abuse:1.15,cat:'premium'},'.ai':{p:85,seo:1.28,abuse:1.1,cat:'premium'},'.dev':{p:35,seo:1.14,abuse:1.2,cat:'premium'},
+'.app':{p:38,seo:1.12,abuse:1.18,cat:'premium'},'.tech':{p:28,seo:1.1,abuse:1.15,cat:'premium'},'.cloud':{p:45,seo:1.08,abuse:1.1,cat:'premium'},
+'.so':{p:32,seo:1.05,abuse:1.2,cat:'premium'},'.gg':{p:40,seo:1.05,abuse:1,cat:'new'},'.tv':{p:35,seo:1,abuse:0.95,cat:'new'},
+'.me':{p:20,seo:1.02,abuse:1.1,cat:'new'},'.co':{p:30,seo:1.08,abuse:1.25,cat:'new'},'.pro':{p:22,seo:1,abuse:1.15,cat:'new'},
+'.shop':{p:18,seo:0.95,abuse:1.05,cat:'new'},'.club':{p:12,seo:0.92,abuse:1,cat:'new'},'.vip':{p:25,seo:0.9,abuse:0.95,cat:'new'},
+'.money':{p:30,seo:0.88,abuse:1.2,cat:'new'},'.casino':{p:55,seo:0.85,abuse:1.4,cat:'new'},'.bet':{p:40,seo:0.87,abuse:1.35,cat:'new'},
+'.xyz':{p:1,seo:0.78,abuse:0.75,cat:'cheap'},'.top':{p:2,seo:0.82,abuse:0.8,cat:'cheap'},'.click':{p:1,seo:0.7,abuse:0.7,cat:'cheap'},
+'.online':{p:3,seo:0.85,abuse:0.85,cat:'cheap'},'.site':{p:2,seo:0.8,abuse:0.78,cat:'cheap'},'.space':{p:2,seo:0.76,abuse:0.72,cat:'cheap'},
+'.icu':{p:1,seo:0.65,abuse:0.65,cat:'cheap'},'.fun':{p:2,seo:0.74,abuse:0.7,cat:'cheap'},'.world':{p:3,seo:0.8,abuse:0.8,cat:'cheap'},
+'.live':{p:4,seo:0.88,abuse:0.85,cat:'cheap'},'.buzz':{p:2,seo:0.72,abuse:0.7,cat:'cheap'},'.loan':{p:3,seo:0.7,abuse:0.9,cat:'cheap'},
+'.adult':{p:28,seo:0.68,abuse:0.25,cat:'dark'},'.onion':{p:140,seo:0.08,abuse:0,cat:'dark'},'.bit':{p:75,seo:0.28,abuse:0.15,cat:'dark'},
+'.cc':{p:18,seo:0.95,abuse:0.9,cat:'dark'},'.to':{p:25,seo:0.88,abuse:0.6,cat:'dark'},'.ws':{p:15,seo:0.9,abuse:0.85,cat:'dark'},
+'.pw':{p:12,seo:0.85,abuse:0.7,cat:'dark'},'.tk':{p:0,seo:0.5,abuse:0.9,cat:'dark'},'.ml':{p:0,seo:0.45,abuse:0.95,cat:'dark'},
+'.ga':{p:0,seo:0.45,abuse:0.95,cat:'dark'},'.cf':{p:0,seo:0.45,abuse:0.95,cat:'dark'}
+},
+servers:{
+'sh_nano':{n:'Shared Nano',cpu:1,ram:1,bw:15,p:12,m:2,abuseM:1},'sh_pro':{n:'Shared Pro',cpu:2,ram:2,bw:60,p:28,m:5,abuseM:1},
+'vps_s':{n:'VPS Basic',cpu:2,ram:4,bw:250,p:75,m:10,abuseM:1},'vps_m':{n:'VPS Standard',cpu:4,ram:8,bw:600,p:180,m:22,abuseM:1},
+'vps_l':{n:'VPS Perf',cpu:8,ram:16,bw:1200,p:380,m:45,abuseM:0.9},
+'bp_vps':{n:'Offshore BP',cpu:4,ram:8,bw:500,p:550,m:55,abuseM:0.2},'bp_ded':{n:'BP Dedicated',cpu:16,ram:32,bw:2000,p:1400,m:120,abuseM:0.15},
+'ded_e3':{n:'Xeon E3',cpu:16,ram:32,bw:1500,p:900,m:90,abuseM:1},'ded_r9':{n:'Ryzen 9',cpu:32,ram:128,bw:6000,p:2200,m:220,abuseM:0.95},
+'gpu_box':{n:'GPU Box',cpu:12,ram:64,bw:3000,p:1800,m:160,abuseM:0.85}
+},
+niches:{
+'blog_it':{n:'IT Блог',c:'legal',gr:1.045,rpm:0.022,ret:0.62,risk:0},'ecom_wh':{n:'Белый E-com',c:'legal',gr:1.03,rpm:0.085,ret:0.32,risk:0},
+'finance':{n:'Финансы',c:'legal',gr:1.035,rpm:0.16,ret:0.22,risk:0.15},'news':{n:'Новости',c:'legal',gr:1.06,rpm:0.018,ret:0.45,risk:0.05},
+'gaming':{n:'Игры',c:'legal',gr:1.055,rpm:0.025,ret:0.55,risk:0.1},'edu':{n:'Курсы',c:'legal',gr:1.04,rpm:0.07,ret:0.4,risk:0.05},
+'health':{n:'Здоровье',c:'legal',gr:1.035,rpm:0.09,ret:0.28,risk:0.2},'travel':{n:'Тревел',c:'legal',gr:1.04,rpm:0.035,ret:0.38,risk:0.05},
+'recipes':{n:'Рецепты',c:'legal',gr:1.05,rpm:0.02,ret:0.5,risk:0},'sports':{n:'Спорт',c:'legal',gr:1.045,rpm:0.028,ret:0.42,risk:0.05},
+'reviews':{n:'Обзоры',c:'legal',gr:1.05,rpm:0.04,ret:0.35,risk:0.08},'ai_tools':{n:'AI Tools',c:'legal',gr:1.07,rpm:0.06,ret:0.48,risk:0.1},
+'jobs':{n:'Вакансии',c:'legal',gr:1.04,rpm:0.05,ret:0.3,risk:0.05},'realty':{n:'Недвижимость',c:'legal',gr:1.03,rpm:0.11,ret:0.2,risk:0.1},
+'auto':{n:'Авто',c:'legal',gr:1.04,rpm:0.045,ret:0.35,risk:0.08},'pets':{n:'Питомцы',c:'legal',gr:1.05,rpm:0.03,ret:0.48,risk:0},
+'warez':{n:'Пиратский софт',c:'gray',gr:1.11,rpm:0.016,ret:0.72,risk:1.6},'streaming':{n:'Онлайн-кино',c:'gray',gr:1.16,rpm:0.009,ret:0.82,risk:2.4},
+'adult':{n:'Adult',c:'gray',gr:1.13,rpm:0.012,ret:0.52,risk:1.1},'torrent':{n:'Торренты',c:'gray',gr:1.14,rpm:0.011,ret:0.78,risk:2},
+'cheats':{n:'Читы',c:'gray',gr:1.09,rpm:0.03,ret:0.6,risk:1.8},'vpn':{n:'VPN/Прокси',c:'gray',gr:1.08,rpm:0.045,ret:0.55,risk:1.2},
+'betting':{n:'Ставки',c:'gray',gr:1.07,rpm:0.12,ret:0.3,risk:1.5},'dropship':{n:'Дропшип серый',c:'gray',gr:1.06,rpm:0.07,ret:0.25,risk:1},
+'mods':{n:'Моды/Читы игр',c:'gray',gr:1.1,rpm:0.02,ret:0.65,risk:1.4},'leaks':{n:'Сливы/Аккаунты',c:'gray',gr:1.08,rpm:0.035,ret:0.5,risk:1.7},
+'crypto_sc':{n:'Крипто-скам',c:'black',gr:1.07,rpm:0.55,ret:0.12,risk:4.2},'phishing':{n:'Фишинг',c:'black',gr:1.04,rpm:1.1,ret:0.06,risk:6.5},
+'carding':{n:'Кардинг',c:'black',gr:1.06,rpm:0.8,ret:0.08,risk:5.5},'malware':{n:'Майлвар',c:'black',gr:1.05,rpm:0.9,ret:0.07,risk:5.8},
+'ransom_svc':{n:'RaaS',c:'black',gr:1.03,rpm:1.2,ret:0.05,risk:7},'nft_scam':{n:'NFT-скам',c:'black',gr:1.08,rpm:0.4,ret:0.15,risk:3.8},
+'drug_shop':{n:'Grey market',c:'black',gr:1.05,rpm:0.7,ret:0.1,risk:5.2},'docs_fake':{n:'Поддельные доки',c:'black',gr:1.04,rpm:0.6,ret:0.09,risk:4.8}
+},
+stack:{
+be:{static:{n:'Static',p:15,cpuM:0.08},php:{n:'PHP',p:140,cpuM:1},node:{n:'Node',p:380,cpuM:0.55},go:{n:'Go',p:1100,cpuM:0.18},rust:{n:'Rust',p:1600,cpuM:0.12},elixir:{n:'Elixir',p:1400,cpuM:0.22}},
+db:{none:{n:'Нет БД',p:0,ramB:0,ramM:0.08},sqlite:{n:'SQLite',p:40,ramB:0.08,ramM:0.45},mysql:{n:'MySQL',p:220,ramB:0.9,ramM:0.95},pg:{n:'Postgres',p:350,ramB:1.4,ramM:0.7},redis:{n:'PG+Redis',p:750,ramB:3.5,ramM:0.28},mongo:{n:'Mongo',p:900,ramB:4,ramM:0.35}},
+design:{tpl:{n:'Шаблон',p:0,retM:0.78},ai:{n:'AI UI',p:600,retM:1.25},prem:{n:'Premium',p:280,retM:1.12},custom:{n:'Custom',p:1400,retM:1.48},pro:{n:'Agency',p:3200,retM:1.75}}
+},
+monetize:{
+none:{n:'Без рекламы',rpmM:0,risk:0,retM:1.25},adsense:{n:'AdSense',rpmM:1,risk:0.12,retM:0.94},teasers:{n:'Тизеры',rpmM:2.8,risk:0.55,retM:0.68},
+subs:{n:'Подписки',rpmM:4.5,risk:0.1,retM:0.52},affiliate:{n:'CPA',rpmM:3.2,risk:0.3,retM:0.75},donation:{n:'Донаты',rpmM:1.8,risk:0.05,retM:1.05},
+miner:{n:'Web-Miner',rpmM:7.5,risk:2.2,retM:0.28},scam:{n:'Скам/SMS',rpmM:18,risk:5.2,retM:0.09},ransom:{n:'Lock',rpmM:25,risk:7,retM:0.04},
+adnet:{n:'Своя AdNet',rpmM:6,risk:0.8,retM:0.85}
+},
+plugins:{
+seo_pack:{n:'SEO-пакет',desc:'+12% органика',p:180,effect:'seo',val:0.12},
+cache:{n:'Кэш',desc:'−20% нагрузка',p:120,effect:'load',val:0.2},
+antibot:{n:'Антибот',desc:'−15% угроза',p:200,effect:'threat',val:0.15},
+analytics:{n:'Аналитика',desc:'+8% RPM',p:150,effect:'rpm',val:0.08},
+push:{n:'Web-Push',desc:'+10% retention',p:160,effect:'ret',val:0.1},
+popup:{n:'Exit-Popup',desc:'+15% RPM, +риск',p:90,effect:'popup',val:0.15},
+ssl_adv:{n:'SSL/HSTS',desc:'−10% угроза',p:100,effect:'ssl',val:0.1},
+amp:{n:'AMP',desc:'+8% органика',p:140,effect:'amp',val:0.08},
+antissniff:{n:'Антисниффер',desc:'−связность сети, −8% угроза',p:220,effect:'sniff',val:0.08},
+anycast_p:{n:'Anycast-модуль',desc:'−15% угроза, +стабильность',p:350,effect:'anycast',val:0.15}
+},
+staff:{
+seo_jr:{n:'SEO-джун',desc:'+8% органика',p:400,m:25,effect:'seo',val:0.08},
+seo_sr:{n:'SEO-сеньор',desc:'+18% органика',p:1200,m:70,effect:'seo',val:0.18},
+lawyer:{n:'Абуз-юрист',desc:'−25% угроза',p:900,m:55,effect:'threat',val:0.25},
+dev:{n:'Fullstack',desc:'−15% нагрузка',p:1500,m:90,effect:'load',val:0.15},
+marketer:{n:'Трафик',desc:'+12% retention',p:700,m:40,effect:'ret',val:0.12},
+hacker:{n:'Grey-hat',desc:'+SEO/день',p:2000,m:110,effect:'hack',val:0.4},
+analyst:{n:'Аналитик',desc:'+10% RPM',p:1100,m:65,effect:'rpm',val:0.1},
+pr:{n:'PR',desc:'+реп/день',p:800,m:50,effect:'rep',val:15},
+ops:{n:'SRE',desc:'−20% нагрузка',p:1600,m:95,effect:'load',val:0.2}
+},
+research:{
+cdn_net:{n:'CDN-сеть',desc:'WAF −40%',cost:2500,day:15},seo_lab:{n:'SEO-лаб',desc:'SEO +25%',cost:1800,day:10},
+legal_fund:{n:'Юр.фонд',desc:'Откуп −30%',cost:3000,day:20},auto_scale:{n:'Автоскейл',desc:'+25% ёмкость',cost:4000,day:25},
+dark_ops:{n:'Dark Ops',desc:'Black −20% риск',cost:5000,day:30},brand:{n:'Бренд',desc:'+50 реп +5% доход',cost:3500,day:18},
+ai_tools:{n:'AI Tools',desc:'Старт ×2',cost:2200,day:12},offshore:{n:'Офшор',desc:'−15% abuse доменов',cost:6000,day:40},
+whitelist_r:{n:'Whitelist-путь',desc:'Открывает белые сети',cost:4000,day:35}
+},
+achievements:{
+first_site:{n:'Первый проект',desc:'Запустите сайт',icon:'🚀'},rich:{n:'Капиталист',desc:'$50k',icon:'💰'},
+empire:{n:'Империя',desc:'5 сайтов',icon:'🏛️'},survivor:{n:'Выживший',desc:'Зеркало-сейв',icon:'🛡'},
+bulletproof:{n:'Броня',desc:'BP сервер',icon:'🔒'},team:{n:'Команда',desc:'3 сотрудника',icon:'👥'},
+researcher:{n:'Учёный',desc:'3 исследования',icon:'🔬'},darknet:{n:'Теневой',desc:'.onion',icon:'🧅'},
+day100:{n:'Ветеран',desc:'День 100',icon:'📅'},million:{n:'Миллионер',desc:'$1M',icon:'💎'},
+banned_king:{n:'Король банов',desc:'5 банов',icon:'💀'},rep50:{n:'Авторитет',desc:'50 реп',icon:'⭐'},
+seller:{n:'Торговец',desc:'Продажа сайта',icon:'🤝'},upgrader:{n:'Апгрейдер',desc:'5 апгрейдов сервера',icon:'⬆️'},
+networker:{n:'Сетевик',desc:'Создайте сеть',icon:'🔗'},mobile_dev:{n:'Мобайл',desc:'Мобильное приложение',icon:'📱'}
+},
+titles:[
+{id:'newbie',n:'Новичок',req:()=>true},
+{id:'webmaster',n:'Вебмастер',req:s=>s.sites.filter(x=>x.status!=='banned').length>=3},
+{id:'graylord',n:'Серый барон',req:s=>s.sites.some(x=>DB.niches[x.niche]?.c==='gray'&&x.status==='online')},
+{id:'darkking',n:'Теневой король',req:s=>s.sites.filter(x=>DB.niches[x.niche]?.c==='black'&&x.status!=='banned').length>=2},
+{id:'whitehat',n:'Белый шляпник',req:s=>(s.whitelist||0)>=50},
+{id:'tycoon',n:'Магнат',req:s=>s.money>=100000},
+{id:'legend',n:'Легенда',req:s=>s.rep>=100&&s.day>=150},
+{id:'network_boss',n:'Хозяин сетей',req:s=>(s.networks||[]).length>=2}
+]
+};
+
+let state={money:5000,day:1,trafficToday:0,incomeToday:0,rep:0,whitelist:0,domains:[],servers:[],sites:[],staff:[],research:[],networks:[],sidCount:1,netCount:1,activeModalSite:null,syndicateName:'Безымянный',tickMs:1000,paused:false,log:[],currentEvent:null,eventDaysLeft:0,theme:'amber',difficulty:'normal',showToasts:true,autosave:true,eventsEnabled:true,achievements:{},banCount:0,marketOffers:[],marketDay:0,auction:[],forumLots:[],forumDay:0,upgradeCount:0,title:'newbie',sandbox:false,slot:1};
+let tickInterval=null,selectedZoneForBuy='.com';
+const DIFF={easy:{threat:0.7,income:1.2},normal:{threat:1,income:1},hard:{threat:1.4,income:0.85},nightmare:{threat:1.8,income:0.75}};
+const SLOT_KEY=i=>`webtycoon_v52_slot${i}`;
+
+function init(){
+  loadSlot(state.slot||1);
+  document.body.setAttribute('data-theme',state.theme);
+  renderDomainZones();renderServerShop();renderStaffShop();renderResearch();refreshMarket();refreshAuction();refreshForum();
+  document.getElementById('launch-niche').innerHTML=Object.entries(DB.niches).map(([k,v])=>`<option value="${k}">[${v.c.toUpperCase()}] ${v.n}</option>`).join('');
+  document.getElementById('launch-backend').innerHTML=Object.entries(DB.stack.be).map(([k,v])=>`<option value="${k}" data-p="${v.p}">${v.n} (+$${v.p})</option>`).join('');
+  document.getElementById('launch-db').innerHTML=Object.entries(DB.stack.db).map(([k,v])=>`<option value="${k}" data-p="${v.p}">${v.n} (+$${v.p})</option>`).join('');
+  document.getElementById('launch-design').innerHTML=Object.entries(DB.stack.design).map(([k,v])=>`<option value="${k}" data-p="${v.p}">${v.n} (+$${v.p})</option>`).join('');
+  document.getElementById('mod-monetize').innerHTML=Object.entries(DB.monetize).filter(([k])=>k!=='adnet').map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('');
+  ['launch-backend','launch-db','launch-design','launch-type'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('change',updateDeployCost)});
+  document.getElementById('sell-domain-select')?.addEventListener('change',updateSellPreview);
+  document.getElementById('sell-site-select')?.addEventListener('change',updateSellSitePreview);
+  syncSettingsUI();updateThemeSwatches();updateUI();startTicker();
+  document.getElementById('sandbox-bar').style.display=state.sandbox?'block':'none';
+  addLog(state.sandbox?'Песочница запущена':'Система v5.2 онлайн');
+}
+function syncSettingsUI(){
+  document.getElementById('set-name').value=state.syndicateName;
+  document.getElementById('set-speed').value=String(state.tickMs);
+  document.getElementById('set-diff').value=state.difficulty;
+  document.getElementById('set-toasts').checked=state.showToasts;
+  document.getElementById('set-autosave').checked=state.autosave;
+  document.getElementById('set-events').checked=state.eventsEnabled;
+  document.getElementById('syndicate-name').innerText='Синдикат: '+state.syndicateName;
+}
+function startTicker(){if(tickInterval)clearInterval(tickInterval);tickInterval=setInterval(gameTick,state.tickMs)}
+function togglePause(){state.paused=!state.paused;document.getElementById('btn-pause').innerText=state.paused?'▶':'⏸';document.getElementById('btn-pause').classList.toggle('active',state.paused);toast(state.paused?'Пауза':'Продолжаем','info')}
+function setTheme(t){state.theme=t;document.body.setAttribute('data-theme',t);updateThemeSwatches()}
+function updateThemeSwatches(){document.querySelectorAll('.theme-swatch').forEach(el=>el.classList.toggle('active',el.dataset.theme===state.theme))}
+
+function renderDomainZones(){
+  const cat=document.getElementById('domainCategorySelect').value;let html='';
+  for(const[z,d]of Object.entries(DB.domainZones)){
+    if(cat!=='all'&&d.cat!==cat)continue;
+    const color=d.cat==='dark'?'var(--danger)':d.cat==='premium'?'var(--brand)':d.cat==='cheap'?'var(--text-muted)':d.cat==='new'?'var(--cyan)':'#fff';
+    html+=`<div style="background:var(--bg);border:1px solid var(--border);padding:6px 8px;border-radius:6px;display:flex;justify-content:space-between;cursor:pointer" onclick="selectZone('${z}')"><span style="color:${color};font-weight:bold;font-size:.78rem">${z}</span><span style="font-size:.68rem;color:var(--success)">$${d.p}</span></div>`;
+  }
+  document.getElementById('domainZonesGrid').innerHTML=html;
+}
+function renderServerShop(){
+  document.getElementById('shop-servers-grid').innerHTML=Object.entries(DB.servers).map(([k,v])=>{
+    const bp=k.startsWith('bp_');
+    return`<div class="card" style="${bp?'border-color:var(--danger)':''}"><div class="card-header"><h3 style="color:${bp?'var(--danger)':'#fff'};margin:0;font-size:.82rem">${v.n}</h3><span class="badge" style="background:var(--border);color:#fff">−$${v.m}/д</span></div>
+    <div class="meter-label"><span>CPU ${v.cpu}</span><span>RAM ${v.ram}G</span><span>NET ${v.bw}</span></div>
+    <button class="btn ${bp?'danger':'primary'}" style="margin-top:6px" onclick="buyServer('${k}')">$${v.p}</button></div>`;
+  }).join('');
+}
+function renderStaffShop(){
+  document.getElementById('staff-shop-grid').innerHTML=Object.entries(DB.staff).map(([k,v])=>{
+    const o=state.staff.includes(k);
+    return`<div class="card"><div class="card-header"><h3 style="margin:0;color:#fff;font-size:.82rem">${v.n}</h3><span class="badge" style="background:var(--border);color:#fff">−$${v.m}/д</span></div>
+    <p style="font-size:.68rem;color:var(--text-muted);text-transform:none">${v.desc}</p>
+    <button class="btn ${o?'':'primary'}" ${o?'disabled':''} onclick="hireStaff('${k}')">${o?'В штате':`$${v.p}`}</button></div>`;
+  }).join('');
+}
+function renderResearch(){
+  const g=document.getElementById('research-grid');if(!g)return;
+  g.innerHTML=Object.entries(DB.research).map(([k,v])=>{
+    const o=state.research.includes(k),l=state.day<v.day;
+    return`<div class="card ${o?'':l?'ach-card':''}"><div class="card-header"><h3 style="margin:0;color:${o?'var(--success)':'#fff'};font-size:.82rem">${v.n}</h3>${o?'<span class="badge online">OK</span>':l?`<span class="badge locked">Д${v.day}</span>`:''}</div>
+    <p style="font-size:.68rem;color:var(--text-muted);text-transform:none">${v.desc}</p>
+    ${!o?`<button class="btn primary" ${l?'disabled':''} onclick="buyResearch('${k}')">$${v.cost}</button>`:''}</div>`;
+  }).join('');
+}
+function refreshMarket(){
+  const zones=Object.keys(DB.domainZones);state.marketOffers=[];
+  for(let i=0;i<6;i++){const z=zones[Math.floor(Math.random()*zones.length)];state.marketOffers.push({zone:z,price:Math.round(DB.domainZones[z].p*(0.8+Math.random()*1.8))})}
+  state.marketDay=state.day;renderMarket();
+}
+function refreshAuction(){
+  const zones=Object.keys(DB.domainZones);state.auction=[];
+  for(let i=0;i<4;i++){
+    const z=zones[Math.floor(Math.random()*zones.length)];
+    const name=['alpha','nova','shadow','cyber','pixel','dark','omega','prime'][Math.floor(Math.random()*8)]+Math.floor(Math.random()*99);
+    state.auction.push({n:name+z,price:Math.round(DB.domainZones[z].p*(2+Math.random()*4)),zone:z});
+  }
+  renderAuction();
+}
+function refreshForum(){
+  const lots=[
+    {n:'Прогретая email-база 10k',p:400,effect:'traf',val:2000},
+    {n:'Доступ к PBN-сетке',p:600,effect:'seo',val:2},
+    {n:'Слив API ключей рекламы',p:350,effect:'money',val:800},
+    {n:'Холодные карты (скам)',p:900,effect:'scam',val:1},
+    {n:'Инсайд хостера',p:500,effect:'threat_reset',val:1},
+    {n:'Пачка аккаунтов соцсетей',p:250,effect:'traf',val:1200}
+  ];
+  state.forumLots=[];
+  for(let i=0;i<4;i++){const l=lots[Math.floor(Math.random()*lots.length)];state.forumLots.push({...l,id:i})}
+  state.forumDay=state.day;renderForum();
+}
+function renderMarket(){
+  const el=document.getElementById('market-offers');if(!el)return;
+  el.innerHTML=state.marketOffers.map(o=>`<div class="card"><div class="card-header"><h4 style="margin:0;color:#fff">*${o.zone}</h4><span style="color:var(--success);font-weight:bold">до $${o.price}</span></div></div>`).join('');
+  const free=state.domains.filter(d=>!d.u);
+  const sel=document.getElementById('sell-domain-select');
+  if(sel){sel.innerHTML=free.length?free.map(d=>`<option value="${d.n}">${d.n}</option>`).join(''):'<option disabled>Нет</option>';updateSellPreview()}
+  const ss=document.getElementById('sell-site-select');
+  if(ss){const sellable=state.sites.filter(s=>s.status!=='banned');ss.innerHTML=sellable.length?sellable.map(s=>`<option value="${s.id}">${s.domain}</option>`).join(''):'<option disabled>Нет</option>';updateSellSitePreview()}
+}
+function renderAuction(){
+  const el=document.getElementById('auction-list');if(!el)return;
+  el.innerHTML=(state.auction||[]).map((a,i)=>`<div class="card"><div class="card-header"><h4 style="margin:0;color:#fff">${a.n}</h4><span style="color:var(--warning)">$${a.price}</span></div>
+  <button class="btn primary btn-sm" onclick="buyAuction(${i})">Ставка</button></div>`).join('')||'<p style="color:var(--text-muted)">Пусто</p>';
+}
+function renderForum(){
+  const el=document.getElementById('forum-list');if(!el)return;
+  el.innerHTML=(state.forumLots||[]).map((l,i)=>`<div class="card"><div class="card-header"><h4 style="margin:0;color:#fff;font-size:.82rem">${l.n}</h4><span style="color:var(--danger)">$${l.p}</span></div>
+  <p style="font-size:.65rem;color:var(--text-muted);text-transform:none">Риск скама 15%</p>
+  <button class="btn purple btn-sm" onclick="buyForum(${i})">Купить</button></div>`).join('');
+}
+function renderNetworks(){
+  const el=document.getElementById('networks-list');if(!el)return;
+  if(!state.networks.length){el.innerHTML='<p style="color:var(--text-muted)">Нет сетей</p>';return}
+  el.innerHTML=state.networks.map(n=>{
+    const members=state.sites.filter(s=>s.networkId===n.id);
+    return`<div class="card"><div class="card-header"><h3 style="margin:0;color:#fff">${n.name}</h3><span class="badge online">${members.length} сайтов</span></div>
+    <div style="font-size:.7rem;color:var(--text-muted)">${members.map(m=>m.domain).join(', ')||'пусто'}</div>
+    <p style="font-size:.65rem;color:var(--cyan);text-transform:none">+${Math.min(15,members.length*3)}% SEO · риск заражения</p></div>`;
+  }).join('');
+}
+function updateSellPreview(){
+  const sel=document.getElementById('sell-domain-select'),prev=document.getElementById('sell-preview');
+  if(!sel||!prev||!sel.value){if(prev)prev.innerText='';return}
+  const zone=getZone(sel.value);const offer=state.marketOffers.find(o=>o.zone===zone);
+  prev.innerText=`≈ $${offer?offer.price:Math.round((DB.domainZones[zone]?.p||5)*0.6)}`;
+}
+function calcSiteValue(s){
+  const traf=Math.floor(s.traf_o+s.traf_d);
+  let val=Math.floor(traf*0.15+(s.incToday||0)*45+s.seo_weight*80+(s.content||0)*30);
+  if(s.cdn)val+=200;if(s.plugins?.length)val+=s.plugins.length*100;if(s.mirror)val+=150;
+  if(s.type==='saas')val*=1.3;if(s.type==='mobile')val*=1.2;if(s.adnet)val+=500;
+  return Math.max(50,val);
+}
+function updateSellSitePreview(){
+  const sel=document.getElementById('sell-site-select'),prev=document.getElementById('sell-site-preview');
+  if(!sel||!prev||!sel.value){if(prev)prev.innerText='';return}
+  const s=state.sites.find(x=>String(x.id)===sel.value);if(!s)return;
+  prev.innerText=`≈ $${calcSiteValue(s).toLocaleString()}`;
+}
+function selectZone(z){selectedZoneForBuy=z;buyDomain()}
+function updateDeployCost(){
+  let cost=0;
+  ['launch-backend','launch-db','launch-design'].forEach(id=>{const sel=document.getElementById(id);cost+=parseInt(sel.options[sel.selectedIndex]?.getAttribute('data-p')||0)});
+  const t=document.getElementById('launch-type')?.value;
+  if(t==='honeypot')cost=Math.max(20,Math.floor(cost*0.3));
+  if(t==='saas')cost+=500;
+  if(t==='mobile')cost+=800;
+  document.getElementById('launch-cost-preview').innerText='$'+cost.toLocaleString();
+}
+function toast(msg,type='success'){if(!state.showToasts&&type!=='ach')return;const c=document.getElementById('toast-container');const e=document.createElement('div');e.className=`toast ${type==='error'?'error':type==='warning'?'warning':type==='info'?'info':type==='ach'?'ach':''}`;e.innerText=msg;c.appendChild(e);setTimeout(()=>e.remove(),3500)}
+function addLog(msg){state.log.unshift({day:state.day,msg});if(state.log.length>60)state.log.pop()}
+
+function switchTab(id){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const btn=document.querySelector(`.nav-btn[data-tab="${id}"]`);if(btn)btn.classList.add('active');
+  if(id==='launch'){
+    const free=state.domains.filter(d=>!d.u);
+    document.getElementById('launch-domain').innerHTML=free.length?free.map(d=>`<option value="${d.n}">${d.n}</option>`).join(''):'<option disabled selected>Нет доменов</option>';
+    document.getElementById('launch-server').innerHTML=state.servers.length?state.servers.map(s=>`<option value="${s.id}">${s.n}</option>`).join(''):'<option disabled selected>Нет серверов</option>';
+    updateDeployCost();
+  }
+  if(id==='staff')renderStaffShop();if(id==='research')renderResearch();
+  if(id==='market'){if(state.day-state.marketDay>=5){refreshMarket();refreshAuction()}else{renderMarket();renderAuction()}}
+  if(id==='forum'){if(state.day-state.forumDay>=7)refreshForum();else renderForum()}
+  if(id==='networks')renderNetworks();if(id==='log')renderLog();updateUI();
+}
+function switchModalTab(id){document.querySelectorAll('.m-tab,.m-tab-content').forEach(el=>el.classList.remove('active'));document.getElementById(id).classList.add('active');const t=document.querySelector(`.m-tab[data-mtab="${id}"]`);if(t)t.classList.add('active')}
+function closeModal(){document.getElementById('modal-overlay').style.display='none';state.activeModalSite=null}
+function openSettings(){syncSettingsUI();updateThemeSwatches();document.getElementById('settings-overlay').style.display='flex'}
+function closeSettings(){document.getElementById('settings-overlay').style.display='none'}
+function applySettings(){
+  state.syndicateName=(document.getElementById('set-name').value.trim().slice(0,24))||'Безымянный';
+  state.tickMs=parseInt(document.getElementById('set-speed').value)||1000;
+  state.difficulty=document.getElementById('set-diff').value||'normal';
+  state.showToasts=document.getElementById('set-toasts').checked;
+  state.autosave=document.getElementById('set-autosave').checked;
+  state.eventsEnabled=document.getElementById('set-events').checked;
+  document.getElementById('syndicate-name').innerText='Синдикат: '+state.syndicateName;
+  startTicker();saveSlot();closeSettings();toast('OK','info');
+}
+function resetGame(){if(!confirm('Сброс текущего слота?'))return;localStorage.removeItem(SLOT_KEY(state.slot));location.reload()}
+function openSlots(){renderSlots();document.getElementById('slots-overlay').style.display='flex'}
+function closeSlots(){document.getElementById('slots-overlay').style.display='none'}
+function renderSlots(){
+  const el=document.getElementById('slots-list');let html='';
+  for(let i=1;i<=3;i++){
+    let info='Пусто';
+    try{const raw=localStorage.getItem(SLOT_KEY(i));if(raw){const d=JSON.parse(raw);info=`День ${d.day||1} · $${Math.floor(d.money||0)} · ${d.syndicateName||''}`}}catch(e){}
+    const cur=state.slot===i&&!state.sandbox;
+    html+=`<div class="card" style="margin-bottom:6px${cur?';border-color:var(--brand)':''}"><div class="card-header"><h4 style="margin:0;color:#fff">Слот ${i}${cur?' ●':''}</h4></div>
+    <p style="font-size:.7rem;color:var(--text-muted);text-transform:none">${info}</p>
+    <div style="display:flex;gap:4px"><button class="btn primary btn-sm" onclick="loadSlot(${i});closeSlots();location.reload()">Загрузить</button>
+    <button class="btn action btn-sm" onclick="saveToSlot(${i})">Сохранить сюда</button></div></div>`;
+  }
+  el.innerHTML=html;
+}
+function saveToSlot(i){const prev=state.slot;state.slot=i;state.sandbox=false;saveSlot();state.slot=prev;toast(`Сохранено в слот ${i}`,'info');renderSlots()}
+function startSandbox(){
+  if(!confirm('Песочница: $50k, отдельный режим?'))return;
+  state={...state,money:50000,day:1,domains:[],servers:[],sites:[],staff:[],research:[],networks:[],sidCount:1,netCount:1,rep:0,whitelist:0,log:[],sandbox:true,banCount:0,achievements:{},upgradeCount:0};
+  document.getElementById('sandbox-bar').style.display='block';closeSlots();updateUI();addLog('Песочница');toast('Песочница','info');
+}
+function exportSave(){
+  const data=JSON.stringify(collectSave(),null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`webtycoon_slot${state.slot}_day${state.day}.json`;a.click();
+  toast('Экспорт','info');
+}
+function importSave(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);Object.assign(state,data);state.sites.forEach(s=>{if(!s.plugins)s.plugins=[];if(!s.locales)s.locales=[];if(!s.subdomains)s.subdomains=[];if(!s.falseMirrors)s.falseMirrors=[]});saveSlot();toast('Импорт OK');setTimeout(()=>location.reload(),400)}catch(e){toast('Ошибка файла','error')}};r.readAsText(file);
+}
+function openAchievements(){
+  updateTitle();
+  document.getElementById('ach-title-cur').innerText=DB.titles.find(t=>t.id===state.title)?.n||'—';
+  document.getElementById('titles-list').innerHTML=DB.titles.map(t=>{
+    const ok=t.req(state);return`<span class="badge ${ok?'title':'locked'}" style="margin:2px">${t.n}</span>`;
+  }).join('');
+  document.getElementById('ach-grid').innerHTML=Object.entries(DB.achievements).map(([k,v])=>{
+    const u=!!state.achievements[k];
+    return`<div class="card ach-card ${u?'unlocked':''}"><div style="font-size:1.3rem">${v.icon}</div><div style="font-weight:bold;color:#fff;font-size:.75rem">${v.n}</div><div style="font-size:.64rem;color:var(--text-muted);text-transform:none">${v.desc}</div></div>`;
+  }).join('');
+  document.getElementById('ach-overlay').style.display='flex';
+}
+function closeAchievements(){document.getElementById('ach-overlay').style.display='none'}
+function unlockAch(key){if(state.achievements[key])return;state.achievements[key]=true;const a=DB.achievements[key];if(a){toast(`🏆 ${a.icon} ${a.n}`,'ach');addLog(`Ачивка: ${a.n}`);state.rep+=5}}
+function updateTitle(){
+  let best='newbie';
+  for(const t of DB.titles){if(t.req(state))best=t.id}
+  if(best!==state.title){state.title=best;toast('Титул: '+DB.titles.find(t=>t.id===best).n,'info')}
+}
+
+function buyDomain(){
+  const name=document.getElementById('domainSearchInput').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+  if(!name||name.length<2)return toast('Имя','error');
+  if(!DB.domainZones[selectedZoneForBuy])return toast('Зона','error');
+  const full=name+selectedZoneForBuy;if(state.domains.find(d=>d.n===full))return toast('Занят','error');
+  const price=DB.domainZones[selectedZoneForBuy].p;if(state.money<price)return toast('Нет $','error');
+  state.money-=price;state.domains.push({n:full,u:false});toast(full);addLog(`Домен ${full}`);
+  if(selectedZoneForBuy==='.onion')unlockAch('darknet');document.getElementById('domainSearchInput').value='';updateUI();
+}
+function buyServer(type){
+  const d=DB.servers[type];if(!d||state.money<d.p)return toast('Нет $','error');
+  state.money-=d.p;const id=state.sidCount++;
+  state.servers.push({id,type,n:`${d.n} #${id}`,cpu:d.cpu,ram:d.ram,bw:d.bw,m:d.m,l_cpu:0,l_ram:0,l_bw:0,upgrades:0,anycast:false});
+  toast(d.n);if(type.startsWith('bp_'))unlockAch('bulletproof');updateUI();
+}
+function upgradeServer(id,stat){
+  const s=state.servers.find(x=>x.id===id);if(!s)return;
+  const costs={cpu:80+s.upgrades*40,ram:60+s.upgrades*30,bw:50+s.upgrades*25,anycast:400};
+  const cost=costs[stat];if(state.money<cost)return toast('Нет $','error');
+  state.money-=cost;
+  if(stat==='anycast'){if(s.anycast)return;s.anycast=true;s.m+=15;toast('Anycast ON')}
+  else{s.upgrades++;state.upgradeCount++;if(stat==='cpu'){s.cpu++;s.m+=3}if(stat==='ram'){s.ram+=2;s.m+=2}if(stat==='bw'){s.bw+=100;s.m+=2};toast(stat.toUpperCase())}
+  if(state.upgradeCount>=5)unlockAch('upgrader');updateUI();
+}
+function hireStaff(key){if(state.staff.includes(key))return;const s=DB.staff[key];if(state.money<s.p)return toast('Нет $','error');state.money-=s.p;state.staff.push(key);toast(s.n);if(state.staff.length>=3)unlockAch('team');renderStaffShop();updateUI()}
+function buyResearch(key){if(state.research.includes(key))return;const r=DB.research[key];if(state.day<r.day||state.money<r.cost)return toast('Недоступно','error');state.money-=r.cost;state.research.push(key);if(key==='brand')state.rep+=50;if(key==='whitelist_r')state.whitelist+=30;toast(r.n);if(state.research.length>=3)unlockAch('researcher');renderResearch();updateUI()}
+function sellDomain(){
+  const sel=document.getElementById('sell-domain-select');if(!sel?.value)return;
+  const name=sel.value;const d=state.domains.find(x=>x.n===name&&!x.u);if(!d)return;
+  const zone=getZone(name);const offer=state.marketOffers.find(o=>o.zone===zone);
+  const price=offer?offer.price:Math.round((DB.domainZones[zone]?.p||5)*0.55);
+  state.money+=price;state.domains=state.domains.filter(x=>x.n!==name);toast(`+$${price}`);renderMarket();updateUI();
+}
+function sellSite(){
+  const sel=document.getElementById('sell-site-select');if(!sel?.value)return;
+  const s=state.sites.find(x=>String(x.id)===sel.value);if(!s||s.status==='banned')return;
+  const price=calcSiteValue(s);if(!confirm(`Продать ${s.domain} за $${price}?`))return;
+  state.money+=price;freeDomain(s.domain);if(s.mirror)freeDomain(s.mirror);
+  state.sites=state.sites.filter(x=>x.id!==s.id);toast(`+$${price}`);unlockAch('seller');renderMarket();updateUI();
+}
+function freeDomain(n){const d=state.domains.find(x=>x.n===n);if(d)d.u=false}
+function buyAuction(i){
+  const a=state.auction[i];if(!a||state.money<a.price)return toast('Нет $','error');
+  if(state.domains.find(d=>d.n===a.n))return toast('Уже есть','error');
+  state.money-=a.price;state.domains.push({n:a.n,u:false});state.auction.splice(i,1);
+  toast(`Аукцион: ${a.n}`);addLog(`Аукцион ${a.n}`);renderAuction();updateUI();
+}
+function buyForum(i){
+  const l=state.forumLots[i];if(!l||state.money<l.p)return toast('Нет $','error');
+  state.money-=l.p;
+  if(Math.random()<0.15){toast('СКАМ! Деньги потеряны','error');addLog('Форум: скам');state.forumLots.splice(i,1);renderForum();updateUI();return}
+  if(l.effect==='traf'){const s=state.sites.find(x=>x.status==='online');if(s)s.traf_d+=l.val;toast('+трафик')}
+  if(l.effect==='seo'){const s=state.sites.find(x=>x.status==='online');if(s)s.seo_weight+=l.val;toast('+SEO')}
+  if(l.effect==='money'){state.money+=l.val;toast(`+$${l.val}`)}
+  if(l.effect==='threat_reset'){state.sites.forEach(s=>{if(s.status==='online')s.threat=Math.max(0,s.threat-30)});toast('Инсайд: −угроза')}
+  if(l.effect==='scam'){toast('Карты получены (флёр)','warning')}
+  state.forumLots.splice(i,1);addLog('Форум: '+l.n);renderForum();updateUI();
+}
+function buyMA(){
+  const price=800+Math.floor(Math.random()*4200);if(state.money<price)return toast('Нет $','error');
+  if(!state.servers.length)return toast('Нужен сервер','error');
+  state.money-=price;
+  const zones=Object.keys(DB.domainZones);const z=zones[Math.floor(Math.random()*zones.length)];
+  const name='ma'+Math.floor(Math.random()*9999)+z;
+  state.domains.push({n:name,u:true});
+  const niches=Object.keys(DB.niches);const niche=niches[Math.floor(Math.random()*niches.length)];
+  state.sites.push({id:Date.now()+Math.random(),domain:name,srv:state.servers[0].id,niche,be:'php',db:'mysql',ds:'prem',
+    traf_o:50+Math.random()*200,traf_d:20+Math.random()*100,seo_weight:1+Math.random()*3,cdn:Math.random()>0.5,mirror:null,
+    mon:'adsense',adsLvl:1,status:'online',incToday:0,threat:Math.random()*40,content:Math.floor(Math.random()*15),
+    plugins:[],locales:['en'],subdomains:[],falseMirrors:[],type:'site',networkId:null,legend:false,ns:false,email:false,adnet:false,pinned:false});
+  toast(`M&A: ${name}`);addLog(`M&A ${name} −$${price}`);unlockAch('first_site');updateUI();
+}
+function createNetwork(){
+  const name=(document.getElementById('net-name').value.trim()||'Network') .slice(0,30);
+  state.networks.push({id:state.netCount++,name});
+  document.getElementById('net-name').value='';toast('Сеть: '+name);unlockAch('networker');renderNetworks();
+}
+function launchSite(){
+  const dom=document.getElementById('launch-domain').value;const srv=parseInt(document.getElementById('launch-server').value);
+  if(!dom||isNaN(srv))return toast('Домен/сервер','error');
+  const be=document.getElementById('launch-backend').value,db=document.getElementById('launch-db').value,ds=document.getElementById('launch-design').value;
+  const type=document.getElementById('launch-type').value||'site';
+  let cost=DB.stack.be[be].p+DB.stack.db[db].p+DB.stack.design[ds].p;
+  if(type==='honeypot')cost=Math.max(20,Math.floor(cost*0.3));
+  if(type==='saas')cost+=500;if(type==='mobile')cost+=800;
+  if(state.money<cost)return toast('Нет $','error');state.money-=cost;
+  const domObj=state.domains.find(d=>d.n===dom);if(domObj)domObj.u=true;
+  let startTraf=state.research.includes('ai_tools')?30:14;
+  if(type==='honeypot')startTraf=5;if(type==='mobile')startTraf=25;if(type==='saas')startTraf=20;
+  state.sites.push({id:Date.now()+Math.random(),domain:dom,srv,niche:document.getElementById('launch-niche').value,be,db,ds,type,
+    traf_o:startTraf+Math.random()*10,traf_d:0,seo_weight:1,cdn:false,mirror:null,mon:type==='saas'?'subs':'none',adsLvl:type==='honeypot'?0:1,
+    status:'online',incToday:0,threat:0,content:0,plugins:[],locales:['en'],subdomains:[],falseMirrors:[],
+    networkId:null,legend:false,ns:false,email:false,adnet:false,pinned:false});
+  toast('Деплой!');if(type==='mobile')unlockAch('mobile_dev');unlockAch('first_site');
+  if(state.sites.filter(s=>s.status!=='banned').length>=5)unlockAch('empire');switchTab('dashboard');
+}
+
+function openSiteSettings(id){
+  const s=state.sites.find(x=>x.id===id);if(!s)return;state.activeModalSite=id;
+  if(!s.plugins)s.plugins=[];if(!s.locales)s.locales=['en'];if(!s.subdomains)s.subdomains=[];if(!s.falseMirrors)s.falseMirrors=[];
+  document.getElementById('m-domain').innerText=s.domain+(s.type&&s.type!=='site'?` [${s.type}]`:'');
+  const stColor=s.status==='online'?'var(--success)':s.status==='banned'?'var(--danger)':'var(--warning)';
+  document.getElementById('m-status').innerHTML=`<span style="color:${stColor}">[${s.status}]</span>`;
+  document.getElementById('m-org-traf').innerText=Math.floor(s.traf_o).toLocaleString();
+  document.getElementById('m-dir-traf').innerText=Math.floor(s.traf_d).toLocaleString();
+  document.getElementById('mod-monetize').value=s.mon==='adnet'?'affiliate':s.mon;
+  document.getElementById('mod-ads-level').value=s.adsLvl;document.getElementById('mod-ads-val').innerText=s.adsLvl;
+  const th=document.getElementById('m-threat-val'),tb=document.getElementById('m-threat-bar');
+  th.innerText=s.threat.toFixed(1)+'%';th.style.color=s.threat>80?'var(--danger)':s.threat>50?'var(--warning)':'var(--success)';
+  tb.style.width=s.threat+'%';tb.style.background=s.threat>80?'var(--danger)':s.threat>50?'var(--warning)':'var(--success)';
+  document.getElementById('m-content-val').innerText=(s.content||0)+'/50';
+  document.getElementById('m-content-bar').style.width=Math.min(100,(s.content||0)*2)+'%';
+  document.getElementById('m-cdn-status').innerText=s.cdn?'WAF ✓':'Нет';
+  document.getElementById('btn-buy-cdn').disabled=!!s.cdn;
+  document.getElementById('btn-buy-cdn').innerText=s.cdn?'OK':`−$${state.research.includes('cdn_net')?168:280}`;
+  document.getElementById('m-ns-status').innerText=s.ns?'Custom NS ✓':'Стандарт';
+  document.getElementById('btn-buy-ns').disabled=!!s.ns;
+  document.getElementById('m-email-status').innerText=s.email?'Email ✓':'Нет';
+  document.getElementById('btn-buy-email').disabled=!!s.email;
+  document.getElementById('btn-legend').disabled=!!s.legend;
+  document.getElementById('btn-legend').innerText=s.legend?'Легенда ✓':'Купить легенду';
+  const canAdnet=state.whitelist>=50||state.day>=40||state.research.includes('whitelist_r');
+  document.getElementById('btn-adnet').disabled=!!s.adnet||!canAdnet;
+  document.getElementById('btn-adnet').innerText=s.adnet?'AdNet ✓':(canAdnet?'Запустить (−$2000)':'Нужен whitelist/день 40');
+  const free=state.domains.filter(d=>!d.u);
+  document.getElementById('mod-mirror').innerHTML=free.length?free.map(d=>`<option value="${d.n}">${d.n}</option>`).join(''):'<option disabled>Нет</option>';
+  document.getElementById('mod-migrate-server').innerHTML=state.servers.map(srv=>`<option value="${srv.id}" ${srv.id===s.srv?'selected':''}>${srv.n}</option>`).join('');
+  document.getElementById('plugins-list').innerHTML=Object.entries(DB.plugins).map(([k,p])=>{
+    const o=s.plugins.includes(k);
+    return`<div class="plugin-row"><div class="info"><div class="name">${p.n}</div><div class="desc">${p.desc}</div></div>
+    <button class="btn ${o?'':'primary'} btn-sm" ${o?'disabled':''} onclick="buyPlugin('${k}')">${o?'✓':'−$'+p.p}</button></div>`;
+  }).join('');
+  document.getElementById('m-be-name').innerText=DB.stack.be[s.be]?.n||s.be;
+  document.getElementById('m-db-name').innerText=DB.stack.db[s.db]?.n||s.db;
+  document.getElementById('m-ds-name').innerText=DB.stack.design[s.ds]?.n||s.ds;
+  const beO=['static','php','node','go','elixir','rust'],dbO=['none','sqlite','mysql','pg','redis','mongo'],dsO=['tpl','ai','prem','custom','pro'];
+  document.getElementById('mod-upgrade-be').innerHTML=beO.filter((_,i)=>i>beO.indexOf(s.be)).map(k=>`<option value="${k}">${DB.stack.be[k].n} +$${DB.stack.be[k].p}</option>`).join('')||'<option disabled>MAX</option>';
+  document.getElementById('mod-upgrade-db').innerHTML=dbO.filter((_,i)=>i>dbO.indexOf(s.db)).map(k=>`<option value="${k}">${DB.stack.db[k].n} +$${DB.stack.db[k].p}</option>`).join('')||'<option disabled>MAX</option>';
+  document.getElementById('mod-upgrade-ds').innerHTML=dsO.filter((_,i)=>i>dsO.indexOf(s.ds)).map(k=>`<option value="${k}">${DB.stack.design[k].n} +$${DB.stack.design[k].p}</option>`).join('')||'<option disabled>MAX</option>';
+  document.getElementById('mod-change-niche').innerHTML=Object.entries(DB.niches).map(([k,v])=>`<option value="${k}" ${k===s.niche?'selected':''}>[${v.c}] ${v.n}</option>`).join('');
+  document.getElementById('m-locales').innerText='Локали: '+(s.locales||['en']).join(', ');
+  document.getElementById('m-false-mirrors').innerText=s.falseMirrors?.length?('Ложные: '+s.falseMirrors.join(', ')):'';
+  document.getElementById('m-subdomains').innerText=s.subdomains?.length?('Поддомены: '+s.subdomains.join(', ')):'';
+  document.getElementById('mod-network').innerHTML='<option value="">— нет —</option>'+state.networks.map(n=>`<option value="${n.id}" ${s.networkId===n.id?'selected':''}>${n.name}</option>`).join('');
+  document.getElementById('modal-overlay').style.display='flex';switchModalTab('m-tab-main');
+}
+function applySiteSettings(type){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  if(type==='monetize'){s.mon=document.getElementById('mod-monetize').value;toast('OK')}
+  if(type==='ads')s.adsLvl=parseInt(document.getElementById('mod-ads-level').value);
+  if(type==='mirror'){const v=document.getElementById('mod-mirror').value;if(v){s.mirror=v;const d=state.domains.find(x=>x.n===v);if(d)d.u=true;toast('Зеркало');openSiteSettings(s.id)}}
+  updateUI();
+}
+function buyPlugin(key){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s||s.plugins.includes(key))return;
+  const p=DB.plugins[key];if(state.money<p.p)return toast('Нет $','error');
+  state.money-=p.p;s.plugins.push(key);toast(p.n);openSiteSettings(s.id);updateUI();
+}
+function upgradeStack(type){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  const sel=document.getElementById(type==='be'?'mod-upgrade-be':type==='db'?'mod-upgrade-db':'mod-upgrade-ds');
+  const val=sel.value;if(!val)return;
+  const cost=type==='be'?DB.stack.be[val].p:type==='db'?DB.stack.db[val].p:DB.stack.design[val].p;
+  if(state.money<cost)return toast('Нет $','error');state.money-=cost;
+  if(type==='be')s.be=val;if(type==='db')s.db=val;if(type==='ds')s.ds=val;
+  toast('Stack UP');openSiteSettings(s.id);updateUI();
+}
+function changeNiche(){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  const n=document.getElementById('mod-change-niche').value;if(n===s.niche)return;
+  if(state.money<150)return toast('Нет $','error');state.money-=150;s.niche=n;s.seo_weight*=0.8;s.traf_o*=0.85;toast('Ниша');openSiteSettings(s.id);updateUI();
+}
+function addLocale(){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  const loc=document.getElementById('mod-locale').value;if(!s.locales)s.locales=['en'];
+  if(s.locales.includes(loc))return toast('Уже есть','error');
+  if(state.money<200)return toast('Нет $','error');state.money-=200;s.locales.push(loc);s.traf_o*=1.08;toast('Локаль +');openSiteSettings(s.id);updateUI();
+}
+function assignNetwork(){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  const v=document.getElementById('mod-network').value;s.networkId=v?parseInt(v):null;toast(v?'В сети':'Вне сети');openSiteSettings(s.id);updateUI();
+}
+function addSubdomain(){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  const sub=(document.getElementById('mod-subdomain').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'')||'');
+  if(!sub)return toast('Имя','error');if(state.money<30)return toast('Нет $','error');
+  if(!s.subdomains)s.subdomains=[];const full=sub+'.'+s.domain;
+  if(s.subdomains.includes(full))return toast('Есть','error');
+  state.money-=30;s.subdomains.push(full);s.traf_o+=5;toast(full);openSiteSettings(s.id);updateUI();
+}
+function autoGenMirror(){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  if(s.mirror)return toast('Уже есть зеркало','error');
+  const base=s.domain.split('.')[0];const zones=['.net','.org','.io','.co','.cc'];
+  const z=zones[Math.floor(Math.random()*zones.length)];const name=base+'-mirror'+z;
+  const price=DB.domainZones[z]?.p||15;if(state.money<price)return toast('Нет $','error');
+  if(state.domains.find(d=>d.n===name))return toast('Занято, попробуйте ещё','error');
+  state.money-=price;state.domains.push({n:name,u:true});s.mirror=name;toast('Зеркало: '+name);openSiteSettings(s.id);updateUI();
+}
+function buyAction(act){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  if(act==='delete'){if(!confirm('Удалить?'))return;freeDomain(s.domain);if(s.mirror)freeDomain(s.mirror);state.sites=state.sites.filter(x=>x.id!==s.id);closeModal();updateUI();return}
+  const costs={seo_cheap:80,seo_pbn:400,seo_guest:250,seo_viral:700,ads_banner:120,ads_target:550,ads_native:300,ads_influencer:1200,
+    cdn:state.research.includes('cdn_net')?168:280,clear_threat:state.research.includes('legal_fund')?245:350,
+    content_small:40,content_big:200,legend:180,ns:300,email:250,false_mirror:100,adnet:2000};
+  if(state.money<(costs[act]||0))return toast('Нет $','error');
+  if(costs[act])state.money-=costs[act];
+  const seoM=state.research.includes('seo_lab')?1.25:1;
+  if(act==='seo_cheap')s.seo_weight+=0.55*seoM;if(act==='seo_pbn')s.seo_weight+=3.2*seoM;
+  if(act==='seo_guest')s.seo_weight+=1.8*seoM;if(act==='seo_viral'){s.seo_weight+=2.5*seoM;s.traf_d+=800}
+  if(act==='ads_banner')s.traf_d+=550;if(act==='ads_target')s.traf_d+=3200;if(act==='ads_native')s.traf_d+=1400;
+  if(act==='ads_influencer'){s.traf_d+=6000;s.traf_o+=200}
+  if(act==='cdn')s.cdn=true;if(act==='clear_threat')s.threat=0;
+  if(act==='content_small')s.content=Math.min(50,(s.content||0)+1);if(act==='content_big')s.content=Math.min(50,(s.content||0)+5);
+  if(act==='legend')s.legend=true;if(act==='ns')s.ns=true;if(act==='email'){s.email=true;s.traf_d=s.traf_d*1.05+50}
+  if(act==='false_mirror'){if(!s.falseMirrors)s.falseMirrors=[];s.falseMirrors.push('fake-'+Math.floor(Math.random()*999)+'.cc');s.threat=Math.max(0,s.threat-5)}
+  if(act==='adnet'){s.adnet=true;s.mon='adnet'}
+  toast('OK');openSiteSettings(s.id);updateUI();
+}
+function migrateSite(){
+  const s=state.sites.find(x=>x.id===state.activeModalSite);if(!s)return;
+  const n=parseInt(document.getElementById('mod-migrate-server').value);if(isNaN(n)||n===s.srv)return;
+  s.srv=n;toast('Миграция');openSiteSettings(s.id);updateUI();
+}
+function togglePin(id){const s=state.sites.find(x=>x.id===id);if(s){s.pinned=!s.pinned;updateUI()}}
+function getZone(dom){const p=dom.split('.');return'.'+p[p.length-1]}
+function getStaffBonus(e){let v=0;state.staff.forEach(k=>{const s=DB.staff[k];if(s?.effect===e)v+=s.val});return v}
+function hasResearch(k){return state.research.includes(k)}
+function getPluginBonus(s,e){if(!s.plugins)return 0;let v=0;s.plugins.forEach(k=>{const p=DB.plugins[k];if(p?.effect===e)v+=p.val});return v}
+
+function maybeTriggerEvent(){
+  if(!state.eventsEnabled)return;
+  if(state.currentEvent){state.eventDaysLeft--;if(state.eventDaysLeft<=0){state.currentEvent=null;document.getElementById('event-banner').classList.remove('show')}return}
+  if(Math.random()>0.09)return;
+  const events=[
+    {title:'🔥 Вирус',desc:'+40% органика 5д',days:5,effect:'orgBoost',val:0.4},
+    {title:'⚠️ Жалобы',desc:'+50% угроза 4д',days:4,effect:'threatBoost',val:0.5},
+    {title:'📈 CPM UP',desc:'+25% RPM 6д',days:6,effect:'rpmBoost',val:0.25},
+    {title:'📉 CPM DOWN',desc:'−20% RPM 5д',days:5,effect:'rpmBoost',val:-0.2},
+    {title:'💥 DDoS',desc:'+30% нагрузка 3д',days:3,effect:'loadBoost',val:0.3},
+    {title:'🎁 Бонус',desc:'+$800',days:1,effect:'money',val:800},
+    {title:'💼 Инвестор',desc:'+$2500 +реп',days:1,effect:'investor',val:2500},
+    {title:'📰 Утечка',desc:'−реп +угроза',days:3,effect:'leak',val:0.3}
+  ];
+  const ev=events[Math.floor(Math.random()*events.length)];state.currentEvent=ev;state.eventDaysLeft=ev.days;
+  if(ev.effect==='money'){state.money+=ev.val;toast(ev.title)}
+  else if(ev.effect==='investor'){state.money+=ev.val;state.rep+=10;toast(ev.title)}
+  else if(ev.effect==='leak'){state.rep=Math.max(0,state.rep-20);toast(ev.title,'warning')}
+  else toast(ev.title,'warning');
+  addLog(ev.title);document.getElementById('event-title').innerText=ev.title;
+  document.getElementById('event-desc').innerText=ev.desc;document.getElementById('event-banner').classList.add('show');
+}
+
+function gameTick(){
+  if(state.paused)return;state.day++;state.trafficToday=0;state.incomeToday=0;
+  state.servers.forEach(s=>{s.l_cpu=0;s.l_ram=0;s.l_bw=0});
+  maybeTriggerEvent();
+  if(state.currentEvent)document.getElementById('event-desc').innerText=state.currentEvent.desc+` (${state.eventDaysLeft}д)`;
+  if(state.day-state.marketDay>=5){refreshMarket();refreshAuction()}
+  if(state.day-state.forumDay>=7)refreshForum();
+  const diff=DIFF[state.difficulty]||DIFF.normal;
+  const seoB=1+getStaffBonus('seo'),thrR=(1-getStaffBonus('threat'))*(hasResearch('offshore')?0.85:1);
+  const loadR=1-getStaffBonus('load'),retB=1+getStaffBonus('ret'),rpmB=1+getStaffBonus('rpm')+(hasResearch('brand')?0.05:0);
+  const hackB=getStaffBonus('hack');state.rep+=getStaffBonus('rep')*0.1;
+  // whitelist growth for legal sites
+  state.sites.forEach(s=>{if(s.status==='online'&&DB.niches[s.niche]?.c==='legal'&&s.mon!=='scam'&&s.mon!=='miner')state.whitelist+=0.05});
+  let eOrg=1,eThr=1,eRpm=1,eLoad=1;
+  if(state.currentEvent){if(state.currentEvent.effect==='orgBoost')eOrg+=state.currentEvent.val;if(state.currentEvent.effect==='threatBoost'||state.currentEvent.effect==='leak')eThr+=state.currentEvent.val;if(state.currentEvent.effect==='rpmBoost')eRpm+=state.currentEvent.val;if(state.currentEvent.effect==='loadBoost')eLoad+=state.currentEvent.val}
+  const scaleB=hasResearch('auto_scale')?1.25:1,darkS=hasResearch('dark_ops')?0.8:1,cdnE=hasResearch('cdn_net')?0.4:0.5;
+
+  state.sites.forEach(s=>{
+    if(s.status==='banned')return;
+    if(!s.plugins)s.plugins=[];const zD=DB.domainZones[getZone(s.domain)]||{seo:1,abuse:1};const nD=DB.niches[s.niche];const mD=DB.monetize[s.mon]||DB.monetize.none;const dD=DB.stack.design[s.ds];
+    const srv=state.servers.find(x=>x.id===s.srv);const srvD=srv?DB.servers[srv.type]:{abuseM:1};
+    // network bonus/risk
+    let netSeo=1,netRisk=1;
+    if(s.networkId){const members=state.sites.filter(x=>x.networkId===s.networkId&&x.status!=='banned');netSeo=1+Math.min(0.15,members.length*0.03);const bannedInNet=state.sites.filter(x=>x.networkId===s.networkId&&x.status==='banned').length;if(bannedInNet)netRisk=1.25}
+    const pThr=1-getPluginBonus(s,'threat')-getPluginBonus(s,'ssl')-getPluginBonus(s,'sniff')-getPluginBonus(s,'anycast')-(s.legend?0.12:0)-(s.ns?0.08:0);
+    const pSeo=1+getPluginBonus(s,'seo')+getPluginBonus(s,'amp');const pLoad=1-getPluginBonus(s,'load');const pRet=1+getPluginBonus(s,'ret');
+    let riskM=nD.c==='black'?darkS:1;
+    if(s.type==='honeypot')riskM*=2.5; // attracts reports
+    let tAdd=(nD.risk+mD.risk+(getPluginBonus(s,'popup')?0.2:0))*zD.abuse*srvD.abuseM*thrR*eThr*diff.threat*riskM*Math.max(0.25,pThr)*netRisk;
+    if(s.cdn)tAdd*=cdnE;if(srv?.anycast)tAdd*=0.85;if(s.falseMirrors?.length)tAdd*=(1-0.03*Math.min(3,s.falseMirrors.length));
+    tAdd*=(1+s.adsLvl*0.14);s.threat+=tAdd;s.threat=Math.min(100,Math.max(0,s.threat));
+    // honeypot absorbs threat from network
+    if(s.type==='honeypot'&&s.networkId){state.sites.forEach(o=>{if(o.networkId===s.networkId&&o.id!==s.id&&o.status==='online'){const share=Math.min(o.threat*0.05,2);o.threat-=share;s.threat=Math.min(100,s.threat+share*0.5)}})}
+    if(s.threat>=100){
+      if(s.mirror){toast(`Переклейка ${s.domain}`,'warning');s.domain=s.mirror;s.mirror=null;s.threat=18;s.traf_o*=0.68;s.seo_weight*=0.75;unlockAch('survivor')}
+      else{s.status='banned';s.traf_o=0;s.traf_d=0;state.banCount++;toast(`БАН ${s.domain}`,'error');if(state.banCount>=5)unlockAch('banned_king');return}
+    }
+    const contB=1+(s.content||0)*0.008;const locB=1+((s.locales||[]).length-1)*0.04;
+    let orgG=nD.gr*zD.seo*(1+Math.log10(Math.max(1,s.seo_weight)))*seoB*eOrg*pSeo*contB*locB*netSeo;
+    if(s.type==='mobile')orgG*=0.9;if(s.type==='saas')orgG*=0.95;if(s.type==='honeypot')orgG*=0.5;
+    if(s.mon==='miner')orgG*=0.82;s.traf_o=s.traf_o*orgG+Math.random()*3;if(hackB>0)s.seo_weight+=hackB*0.15;
+    let ret=nD.ret*dD.retM*mD.retM*(1-s.adsLvl*0.09)*retB*pRet;if(s.email)ret*=1.05;
+    s.traf_d=s.traf_d*Math.max(0.12,ret);
+    // subdomains tiny traffic
+    if(s.subdomains?.length)s.traf_o+=s.subdomains.length*0.5;
+    const total=Math.floor(s.traf_o+s.traf_d);
+    if(srv){
+      let cpu=(total*0.001)*DB.stack.be[s.be].cpuM*loadR*eLoad*pLoad;
+      let ram=(DB.stack.db[s.db].ramB+total*0.0005*DB.stack.db[s.db].ramM)*loadR*pLoad;
+      let bw=total*0.048*eLoad*pLoad;if(s.cdn){cpu*=0.55;bw*=0.18}if(s.type==='mobile')cpu*=1.1;
+      srv.l_cpu+=cpu;srv.l_ram+=ram;srv.l_bw+=bw;
+    }
+  });
+  state.sites.forEach(s=>{
+    if(s.status==='banned')return;const srv=state.servers.find(x=>x.id===s.srv);
+    const mxC=srv?srv.cpu*scaleB:0,mxR=srv?srv.ram*scaleB:0,mxB=srv?srv.bw*scaleB:0;
+    if(srv&&(srv.l_cpu>mxC||srv.l_ram>mxR||srv.l_bw>mxB)){s.status='offline';s.incToday=0}
+    else{s.status='online';const total=Math.floor(s.traf_o+s.traf_d);state.trafficToday+=total;
+      const pRpm=1+getPluginBonus(s,'rpm')+getPluginBonus(s,'popup');
+      let rpm=(DB.niches[s.niche]?.rpm||0)*(DB.monetize[s.mon]?.rpmM||0)*(s.adsLvl*0.45+0.55)*eRpm*rpmB*diff.income*pRpm;
+      if(s.mon==='none')rpm=0;if(s.type==='honeypot')rpm*=0.15;if(s.type==='saas')rpm*=1.4;if(s.adnet)rpm*=1.15;
+      s.incToday=(total/100)*rpm;state.incomeToday+=s.incToday}
+  });
+  let exp=state.servers.reduce((a,s)=>a+s.m,0);state.staff.forEach(k=>{exp+=DB.staff[k]?.m||0});
+  state.money+=state.incomeToday-exp;
+  if(state.money<-2000&&state.servers.length){const v=state.servers.pop();state.sites.forEach(s=>{if(s.srv===v.id)s.status='offline'});toast('Конфискация','error')}
+  if(state.money>=50000)unlockAch('rich');if(state.money>=1e6)unlockAch('million');if(state.day>=100)unlockAch('day100');if(state.rep>=50)unlockAch('rep50');
+  updateTitle();
+  if(state.autosave&&state.day%10===0&&!state.sandbox)saveSlot();
+  updateUI();if(state.activeModalSite)openSiteSettings(state.activeModalSite);
+}
+
+function updateUI(){
+  document.getElementById('ui-day').innerText=state.day;
+  document.getElementById('ui-traffic').innerText=state.trafficToday.toLocaleString();
+  document.getElementById('ui-income').innerText='+$'+state.incomeToday.toFixed(0);
+  document.getElementById('ui-money').innerText='$'+Math.floor(state.money).toLocaleString();
+  document.getElementById('ui-money').style.color=state.money<0?'var(--danger)':'#fff';
+  document.getElementById('ui-rep').innerText=Math.floor(state.rep);
+  document.getElementById('ui-title').innerText=(DB.titles.find(t=>t.id===state.title)?.n||'—').slice(0,12);
+  document.getElementById('domains-count').innerText=`(${state.domains.length})`;
+  const domList=document.getElementById('my-domains-list');
+  if(domList)domList.innerHTML=state.domains.length?state.domains.map(d=>{const z=DB.domainZones[getZone(d.n)]||{};return`<div class="card"><div class="card-header"><h4 style="margin:0;color:#fff;font-size:.82rem">${d.n}</h4><span class="badge ${d.u?'offline':'online'}">${d.u?'Занят':'Свободен'}</span></div><div style="font-size:.65rem;color:var(--text-muted)">SEO ×${(z.seo||1).toFixed(2)}</div></div>`}).join(''):'<p style="color:var(--text-muted)">Пусто</p>';
+  const srvGrid=document.getElementById('my-servers-grid');
+  if(srvGrid){const sc=hasResearch('auto_scale')?1.25:1;srvGrid.innerHTML=state.servers.map(s=>{
+    const pC=Math.min(100,(s.l_cpu/(s.cpu*sc))*100),pR=Math.min(100,(s.l_ram/(s.ram*sc))*100),pB=Math.min(100,(s.l_bw/(s.bw*sc))*100);
+    const c=v=>v>90?'var(--danger)':v>70?'var(--warning)':'var(--success)';
+    return`<div class="card"><div class="card-header"><h4 style="margin:0;color:#fff;font-size:.82rem">${s.n}${s.anycast?' 🌐':''}</h4><span style="color:var(--danger);font-size:.7rem">−$${s.m}/д</span></div>
+    <div class="meter-container"><div class="meter-label"><span>CPU ${s.cpu}</span><span>${pC.toFixed(0)}%</span></div><div class="meter-bg"><div class="meter-fill" style="width:${pC}%;background:${c(pC)}"></div></div></div>
+    <div class="meter-container"><div class="meter-label"><span>RAM ${s.ram}G</span><span>${pR.toFixed(0)}%</span></div><div class="meter-bg"><div class="meter-fill" style="width:${pR}%;background:${c(pR)}"></div></div></div>
+    <div class="meter-container"><div class="meter-label"><span>NET ${s.bw}</span><span>${pB.toFixed(0)}%</span></div><div class="meter-bg"><div class="meter-fill" style="width:${pB}%;background:${c(pB)}"></div></div></div>
+    <div style="display:flex;gap:3px;margin-top:4px;flex-wrap:wrap">
+      <button class="btn btn-sm action" onclick="upgradeServer(${s.id},'cpu')">+CPU</button>
+      <button class="btn btn-sm action" onclick="upgradeServer(${s.id},'ram')">+RAM</button>
+      <button class="btn btn-sm action" onclick="upgradeServer(${s.id},'bw')">+NET</button>
+      ${!s.anycast?`<button class="btn btn-sm purple" onclick="upgradeServer(${s.id},'anycast')">Anycast $400</button>`:''}
+    </div></div>`;
+  }).join('')||'<p style="color:var(--text-muted)">Нет серверов</p>'}
+  const sitesGrid=document.getElementById('sites-grid'),empty=document.getElementById('empty-sites');
+  if(sitesGrid){
+    if(!state.sites.length){sitesGrid.innerHTML='';if(empty)empty.style.display='block'}
+    else{if(empty)empty.style.display='none';
+      const sorted=[...state.sites].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+      sitesGrid.innerHTML=sorted.map(s=>{
+        const bc=s.status==='online'?'online':s.status==='banned'?'banned':'offline';
+        const traf=Math.floor(s.traf_o+s.traf_d);const ct=s.threat>80?'var(--danger)':s.threat>50?'var(--warning)':'var(--success)';
+        const niche=DB.niches[s.niche];const plugs=(s.plugins||[]).length;
+        return`<div class="card ${s.pinned?'pinned':''}" style="${s.status==='banned'?'opacity:.4;filter:grayscale(1)':''}">
+          <div class="card-header"><h3 style="margin:0;color:#fff;font-size:.9rem">${s.pinned?'📌 ':''}${s.domain}</h3><span class="badge ${bc}">${s.status}</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;font-size:.68rem;color:var(--text-muted);margin-bottom:4px">
+            <span>${niche?niche.n:s.niche}${s.type&&s.type!=='site'?' · '+s.type:''}</span>
+            <span style="color:var(--success)">$${s.incToday.toFixed(1)}</span>
+            <span>${traf.toLocaleString()} хостов</span>
+            <span>📝${s.content||0} 🔌${plugs}${s.networkId?' 🔗':''}</span>
+          </div>
+          <div class="meter-container" style="margin-bottom:6px"><div class="meter-label"><span>УГРОЗА</span><span style="color:${ct}">${s.threat.toFixed(1)}%</span></div>
+          <div class="meter-bg"><div class="meter-fill" style="width:${s.threat}%;background:${ct}"></div></div></div>
+          <div style="display:flex;gap:4px">
+            <button class="btn action" style="flex:1" onclick="openSiteSettings(${s.id})" ${s.status==='banned'?'disabled':''}>Консоль</button>
+            <button class="btn btn-sm" onclick="togglePin(${s.id})">${s.pinned?'📌':'📍'}</button>
+          </div></div>`;
+      }).join('');
+    }
+  }
+  const staffGrid=document.getElementById('my-staff-grid');
+  if(staffGrid)staffGrid.innerHTML=state.staff.length?state.staff.map(k=>{const s=DB.staff[k];return`<div class="card"><div class="card-header"><h4 style="margin:0;color:#fff;font-size:.82rem">${s.n}</h4><span style="color:var(--danger);font-size:.7rem">−$${s.m}/д</span></div><p style="font-size:.68rem;color:var(--text-muted);text-transform:none">${s.desc}</p></div>`}).join(''):'<p style="color:var(--text-muted)">Пусто</p>';
+}
+function renderLog(){const el=document.getElementById('game-log');if(el)el.innerHTML=state.log.length?state.log.map(l=>`<div class="log-entry">Д${l.day}: <span>${l.msg}</span></div>`).join(''):'<div class="log-entry">Пусто</div>'}
+function collectSave(){return{money:state.money,day:state.day,rep:state.rep,whitelist:state.whitelist,domains:state.domains,servers:state.servers,sites:state.sites,staff:state.staff,research:state.research,networks:state.networks,sidCount:state.sidCount,netCount:state.netCount,syndicateName:state.syndicateName,tickMs:state.tickMs,theme:state.theme,difficulty:state.difficulty,showToasts:state.showToasts,autosave:state.autosave,eventsEnabled:state.eventsEnabled,achievements:state.achievements,banCount:state.banCount,log:state.log.slice(0,40),marketOffers:state.marketOffers,marketDay:state.marketDay,auction:state.auction,forumLots:state.forumLots,forumDay:state.forumDay,upgradeCount:state.upgradeCount,title:state.title,slot:state.slot}}
+function saveSlot(){if(state.sandbox)return;try{localStorage.setItem(SLOT_KEY(state.slot||1),JSON.stringify(collectSave()))}catch(e){}}
+function loadSlot(i){
+  state.slot=i;state.sandbox=false;
+  try{const raw=localStorage.getItem(SLOT_KEY(i))||localStorage.getItem('webtycoon_v5');if(!raw)return;const d=JSON.parse(raw);
+    Object.assign(state,{money:d.money??5000,day:d.day??1,rep:d.rep??0,whitelist:d.whitelist??0,domains:d.domains||[],servers:d.servers||[],sites:d.sites||[],staff:d.staff||[],research:d.research||[],networks:d.networks||[],sidCount:d.sidCount||1,netCount:d.netCount||1,syndicateName:d.syndicateName||'Безымянный',tickMs:d.tickMs||1000,theme:d.theme||'amber',difficulty:d.difficulty||'normal',showToasts:d.showToasts!==false,autosave:d.autosave!==false,eventsEnabled:d.eventsEnabled!==false,achievements:d.achievements||{},banCount:d.banCount||0,log:d.log||[],marketOffers:d.marketOffers||[],marketDay:d.marketDay||0,auction:d.auction||[],forumLots:d.forumLots||[],forumDay:d.forumDay||0,upgradeCount:d.upgradeCount||0,title:d.title||'newbie',slot:i});
+    state.sites.forEach(s=>{if(!s.plugins)s.plugins=[];if(!s.locales)s.locales=['en'];if(!s.subdomains)s.subdomains=[];if(!s.falseMirrors)s.falseMirrors=[];if(s.content===undefined)s.content=0;if(!s.type)s.type='site'});
+    state.servers.forEach(s=>{if(s.upgrades===undefined)s.upgrades=0;if(s.anycast===undefined)s.anycast=false});
+  }catch(e){}
+}
+window.addEventListener('beforeunload',()=>{if(state.autosave&&!state.sandbox)saveSlot()});
+window.onload=init;
+</script>
+</body>
+</html>
